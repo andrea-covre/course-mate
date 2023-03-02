@@ -41,14 +41,14 @@ CREATE TABLE subject(
 
 CREATE TABLE major(
 	id INT NOT NULL AUTO_INCREMENT,
-    level ENUM('BS', 'MS', 'Ph.D') NOT NULL,
+    level VARCHAR(3) NOT NULL,
 	name VARCHAR(64) NOT NULL,
     code VARCHAR(4),
     
     PRIMARY KEY (id),
     
-    UNIQUE(name),
-    UNIQUE(code)
+    UNIQUE(level, name),
+    UNIQUE(level, code)
 );
 
 CREATE TABLE class(
@@ -57,6 +57,7 @@ CREATE TABLE class(
     year_ YEAR NOT NULL,
     subject_code VARCHAR(4) NOT NULL,
 	class_number SMALLINT NOT NULL,
+    name varchar(100),
     description TEXT,
     
     PRIMARY KEY (id),
