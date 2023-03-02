@@ -7,6 +7,25 @@ drop database if exists course_mate;
 create database if not exists course_mate;
 use course_mate;
 
+CREATE TABLE subject(
+	code VARCHAR(4) NOT NULL,
+    name VARCHAR(64),
+    
+	PRIMARY KEY (code),
+    
+    UNIQUE(name)
+);
+
+CREATE TABLE major(
+	id SMALLINT NOT NULL AUTO_INCREMENT,
+    level VARCHAR(3) NOT NULL,
+	name VARCHAR(64) NOT NULL,
+    
+    PRIMARY KEY (id),
+    
+    UNIQUE(level, name)
+);
+
 CREATE TABLE account(
 	id INT NOT NULL AUTO_INCREMENT,
 	email_address VARCHAR(320) NOT NULL, 
@@ -15,9 +34,10 @@ CREATE TABLE account(
     last_name VARCHAR(50) NOT NULL,
     phone_number VARCHAR(15),
     grad_year YEAR NOT NULL,
-    major ENUM('Computer Science', 'Mathematics', 'Biology') NOT NULL,
+    major_id SMALLINT NOT NULL,
     
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+    FOREIGN KEY (major_id) REFERENCES major(id)
 ); 
 
 CREATE TABLE friendship(
@@ -30,38 +50,24 @@ CREATE TABLE friendship(
     FOREIGN KEY (account_id_2) REFERENCES account(id) ON DELETE CASCADE
 ); 
 
-CREATE TABLE subject(
-	id INT NOT NULL AUTO_INCREMENT,
-	subject_code VARCHAR(4),
+CREATE TABLE semester(
+	id SMALLINT NOT NULL AUTO_INCREMENT,
+    term ENUM('fall', 'spring', 'summer') NOT NULL,
+    semester_year YEAR NOT NULL,
     
     PRIMARY KEY (id),
     
-    UNIQUE(subject_code)
-);
-
-CREATE TABLE major(
-	id INT NOT NULL AUTO_INCREMENT,
-    level VARCHAR(3) NOT NULL,
-	name VARCHAR(64) NOT NULL,
-    code VARCHAR(4),
-    
-    PRIMARY KEY (id),
-    
-    UNIQUE(level, name),
-    UNIQUE(level, code)
+    UNIQUE(term, semester_year)
 );
 
 CREATE TABLE class(
 	id INT NOT NULL AUTO_INCREMENT,
-	term ENUM('fall', 'spring', 'summer') NOT NULL,
-    year_ YEAR NOT NULL,
     subject_code VARCHAR(4) NOT NULL,
 	class_number SMALLINT NOT NULL,
     name varchar(100),
     description TEXT,
     
-    PRIMARY KEY (id),
-    FOREIGN KEY (subject_code) REFERENCES subject(subject_code)
+    PRIMARY KEY (id)
 ); 
 
 CREATE TABLE instructor(
@@ -84,30 +90,39 @@ CREATE TABLE location(
 );
 
 CREATE TABLE section(
-	class_id INT NOT NULL,
+	id INT NOT NULL AUTO_INCREMENT,
+	semester_id SMALLINT NOT NULL,
+    class_id INT NOT NULL,
     crn INT NOT NULL,
     section_name VARCHAR(6) NOT NULL,
     instructors TEXT,
     times TEXT,
     location_id INT,
-    seats SMALLINT,
     
-    PRIMARY KEY (class_id),
+    PRIMARY KEY (id),
     FOREIGN KEY (class_id) REFERENCES class(id) ON DELETE CASCADE,
+    FOREIGN KEY (semester_id) REFERENCES semester(id) ON DELETE CASCADE,
     FOREIGN KEY (location_id) REFERENCES location(id),
     
-    UNIQUE(class_id, crn)
+    UNIQUE(semester_id, crn)
 ); 
+
+CREATE TABLE section_instructor(
+	section_id INT NOT NULL,
+    instructor_id INT NOT NULL,
+    
+	PRIMARY KEY (section_id, instructor_id),
+    FOREIGN KEY (section_id) REFERENCES section(id) ON DELETE CASCADE,
+    FOREIGN KEY (instructor_id) REFERENCES instructor(id) ON DELETE CASCADE
+);
 
 CREATE TABLE schedule(
 	account_id INT NOT NULL,
-	class_id INT NOT NULL,
-    crn INT NOT NULL,
+    section_id INT NOT NULL,
     
-    PRIMARY KEY (account_id, class_id, crn),
+    PRIMARY KEY (account_id, section_id),
     FOREIGN KEY (account_id) REFERENCES account(id) ON DELETE CASCADE,
-    FOREIGN KEY (class_id) REFERENCES class(id) ON DELETE CASCADE,
-    FOREIGN KEY (class_id, crn) REFERENCES section(class_id, crn) ON DELETE CASCADE
+    FOREIGN KEY (section_id) REFERENCES section(id) ON DELETE CASCADE
 ); 
 
 
