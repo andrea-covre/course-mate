@@ -41,6 +41,93 @@ class SQLOperations:
         crsr.commit()
         cnxn.close()
     
+    def update_account_email_address(self, id, email_address): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET email_address = '{value}'\
+        WHERE ID = {id}".format(
+            value = email_address,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+
+    def update_account_edu_email_address(self, id, edu_email_address): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET edu_email_address = '{value}'\
+        WHERE ID = {id}".format(
+            value = edu_email_address,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+    
+    def update_account_first_name(self, id, first_name): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET first_name = '{value}'\
+        WHERE ID = {id}".format(
+            value = first_name,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+
+    def update_account_last_name(self, id, last_name): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET last_name = '{value}'\
+        WHERE ID = {id}".format(
+            value = last_name,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+    
+    def update_account_phone_number(self, id, phone_number): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET phone_number = '{value}'\
+        WHERE ID = {id}".format(
+            value = phone_number,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+
+    def update_account_major_id(self, id, major_id): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET major_id = {value}\
+        WHERE ID = {id}".format(
+            value = major_id,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+
+    def update_account_grad_year(self, id, grad_year): 
+        cnxn, crsr = self.connection.open_connection()
+        query = "UPDATE [account]\
+        SET grad_year = {value}\
+        WHERE ID = {id}".format(
+            value = grad_year,
+            id = id
+        )
+        crsr.execute(query)
+        crsr.commit()
+        cnxn.close()
+
+if __name__ == "__main__":
+    obj = SQLOperations()
+    obj.update_account_by_id(2, {'email_address': "test@gmail.com"})
 
 def parse_from_response(response) -> Account:
     print(response)
