@@ -8,6 +8,7 @@ class SQLConnectionObject:
         self.database_name = 'InternationalDB'
         self.server = '{server}.database.windows.net, 1433'.format(server=self.server_name)
         self.username = "theinternational"
+        self.password = "servicesapps1!"
 
     def create_connection_string(self) -> str:
         connection_string = textwrap.dedent('''

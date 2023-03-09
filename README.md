@@ -4,4 +4,4 @@ For internal use only: to connect to database and use API, add a password field 
 
 Example:
 
-self.password = <your_password>
+self.password = $your_password$

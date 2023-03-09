@@ -2,69 +2,62 @@ import textwrap
 import pyodbc
 import json 
 import datetime
+import ast
+import requests
+
 from account import Account
+from flask import Flask, request, jsonify
+from flask_restful import Resource, Api, reqparse
 from connection import SQLConnectionObject
+from database import SQLOperations, parse_from_response
 
-VALID = 1
-INVALID = 0
+app = Flask(__name__)
+api = Api(app)
 
-class API:
-    def __init__(self):
-        self.connection = SQLConnectionObject()
-
-    def get_account_by_id(self, id: int) -> Account:
-        cnxn, crsr = self.connection.open_connection()
-        query = "SELECT * FROM [account] WHERE ID = {id}".format(id=id)
-        crsr.execute(query)
-        response = crsr.fetchall()
-        account = parse_from_response(response)
-        cnxn.close()
-        return account
-    
-    def create_account(self, id, email_address, edu_email_address, first_name, last_name, phone_number, grad_year, major_id):
-        cnxn, crsr = self.connection.open_connection()
-        query = "SET IDENTITY_INSERT [account] ON\
-                INSERT INTO [account]\
-                (id, email_address, edu_email_address, first_name, last_name, phone_number, grad_year, major_id)\
-                VALUES ({id}, '{email_address}', '{edu_email_address}', '{first_name}', '{last_name}', '{phone_number}', {grad_year}, {major_id})\
-                SET IDENTITY_INSERT [account] OFF".format(
-                    id = id,
-                    email_address=email_address,
-                    edu_email_address=edu_email_address,
-                    first_name=first_name,
-                    last_name=last_name,
-                    phone_number=phone_number,
-                    grad_year=grad_year,
-                    major_id=major_id
-                )
-        
-        crsr.execute(query)
-        crsr.commit()
-        cnxn.close()
-    
-
-def parse_from_response(self, response) -> Account:
-    if response:
-        response = response[0]
-        id = response[0]
-        email_address = response[1]
-        edu_email_address = response[2]
-        first_name = response[3]
-        last_name = response[4]
-        phone_number = response[5]
-        grad_year = response[6]
-        major_id = response[7]
-        account = Account(id, email_address, edu_email_address, first_name, last_name, phone_number, grad_year, major_id)
-        return account
+#Example = /users?id=<user_id>
+@app.route('/users', methods=['GET'])
+def users():
+    args = request.args
+    print(json.dumps(args))
+    id = args.get('id')
+    operations = SQLOperations()
+    result = operations.get_account_by_id(id)
+    if result:
+        return result.__dict__, 200
     else:
-        return INVALID
+        return {}, 400
 
+@app.route('/users/add', methods=['POST'])
+def testpost():
+    data = request.get_json(force=True)
+    data = json.loads(data)
+    id = data['id']
+    email_address = data['email_address']
+    first_name = data['first_name']
+    last_name = data['last_name']
+    major_id = data['major_id']
 
+    edu_email_address = None
+    phone_number = None
+    grad_year = None
+    firebase_id = None
 
-def main():
-    api = API()
-    # api.get_account_by_id(id = 3)
-    # api.create_account()
+    if 'edu_email_address' in data:
+        edu_email_address = data['edu_email_address']
+    if 'phone_number' in data:
+        phone_number = data['phone_number']
+    if 'grad_year' in data:
+        grad_year = data['grad_year']
+    if 'firebase_id' in data:
+        firebase_id = data['firebase_id']
 
-if __name__ == "__main__":
-    main()
+    operations = SQLOperations()
+    operations.create_account(id, email_address, edu_email_address, first_name, last_name,
+                            phone_number, grad_year, major_id, firebase_id)
+    
+    return jsonify(data)
+    
+
+    
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
