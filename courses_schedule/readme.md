@@ -1,5 +1,4 @@
-ode Documentation
-------------------
+# Course Scraper Documentation
 
 This code allows users to extract course information from the Georgia Tech OSCAR system. The information that can be extracted includes the course name, section ID, CRN, and other details.
 

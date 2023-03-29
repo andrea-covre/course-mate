@@ -4,5 +4,5 @@
 # Python
 */__pycache__/
 
-# Course pickle files
-/courses_schedule/*.pkl
+# Pickle files
+*.pkl
