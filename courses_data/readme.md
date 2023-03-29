@@ -40,8 +40,6 @@ This is the main function of the program. It first parses the command-line argum
 
 To extract course information for the Fall 2023 semester, run the following command:
 
-python
-
 ```python
 python oscar_scraper.py fall 2023
 ```
