@@ -1,2 +1,8 @@
 # MacOS
 *.DS_Store
+
+# Python
+*/__pycache__/
+
+# Course pickle files
+/courses_schedule/*.pickle
