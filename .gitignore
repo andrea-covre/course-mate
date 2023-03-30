@@ -6,3 +6,7 @@
 
 # Pickle files
 *.pkl
+
+# DB env
+.env
+
