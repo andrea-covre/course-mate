@@ -38,10 +38,10 @@ This is the main function of the program. It first parses the command-line argum
 
 ### Example usage
 
-To extract course information for the Fall 2023 semester, run the following command:
+To extract course information for the Fall 2023 semester, run the following command in this directory:
 
 ```python
-python oscar_scraper.py fall 2023
+python course_scraper.py fall 2023
 ```
 
 This will generate a file with the format `fall_2023_<timestamp>.pkl` in the current directory, where `<timestamp>` is a Unix timestamp indicating the time the file was generated. The file will contain a list of dictionaries, where each dictionary represents a course section and contains information such as the course name, section ID, and CRN.
