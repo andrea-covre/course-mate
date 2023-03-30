@@ -1,20 +1,21 @@
 import enum
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Enum
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.types import Enum
 
 class Base(DeclarativeBase):
    pass
 
 class Term(enum.Enum):
-    fall = "Fall"
-    spring = "Spring"
-    summer = "Summer"
+    fall = "fall"
+    spring = "spring"
+    summer = "summer"
 
 class Semester(Base):
     __tablename__ = "semester"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    term: Mapped[Enum(Term)]
+    term: Mapped[Term]
     semester_year: Mapped[int]
 
     def as_dict(self):

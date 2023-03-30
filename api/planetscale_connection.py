@@ -5,7 +5,7 @@ import sqlalchemy as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from models.major import Major
+from api.models.major import Major
 
 def get_db_session():
     load_dotenv()

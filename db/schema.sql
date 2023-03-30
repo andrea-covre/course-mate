@@ -63,7 +63,7 @@ CREATE TABLE semester(
 CREATE TABLE class(
 	id INT NOT NULL AUTO_INCREMENT,
     subject_code VARCHAR(4) NOT NULL,
-	class_number SMALLINT NOT NULL,
+	class_number VARCHAR(5) NOT NULL,
     name varchar(100),
     description TEXT,
     
