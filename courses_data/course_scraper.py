@@ -4,7 +4,7 @@ import requests
 from time import time
 from bs4 import BeautifulSoup
 
-from data_extractor import extract_data
+from courses_data.data_extractor import extract_data
 
 URL = 'https://oscar.gatech.edu/bprod/bwckschd.p_get_crse_unsec'
 
@@ -95,13 +95,9 @@ def get_request_data_body(year: int, semester: str):
     data.extend(requested_subjects)
     
     return data
-    
-    
-def main():
-    args = parse_args()
-    year = args.year
-    semester = args.semester
-    
+
+
+def scrape_course_data(year: int, semester: str):
     data_body = get_request_data_body(year, semester)
 
     print(f"> Requesting data for the {semester.capitalize()} {year} term...")
@@ -123,6 +119,15 @@ def main():
     print(f"> Saving sections data to {output_filename}")
     with open(output_filename, 'wb') as f:
         pickle.dump(sections, f)
+        
+    return sections
+    
+def main():
+    args = parse_args()
+    year = args.year
+    semester = args.semester
+    
+    scrape_course_data(year, semester)
     
 
 if __name__ == '__main__':

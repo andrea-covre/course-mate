@@ -18,6 +18,7 @@ def replace_html_char(html: str):
 
 @dataclass
 class Section:
+    semester: str
     subject: str
     class_code: int
     name: str
@@ -54,7 +55,9 @@ def get_name(html_block: str):
     regex = r'<a href=".+">([\s\S]+) - [0-9]{5} - [A-Z]+ [0-9]{4}[A-Z]? - [A-Z0-9]+</a></th>'   
     match = re.search(regex, html_block)
     if match:
-        return match.group(1)
+        match = match.group(1)
+        match = replace_html_char(match)
+        return match
 
 def get_section_code(html_block: str):
     regex = r'<a href=".+">[\s\S]+ - [0-9]{5} - [A-Z]+ [0-9]{4}[A-Z]? - ([A-Z0-9]+)</a></th>'   
@@ -75,6 +78,11 @@ def get_description(html_block: str):
         match = match.group(1)
         match = replace_html_char(match)
         return match
+    
+def get_semester(html_block: str):
+    regex = r'<span class="fieldlabeltext">Associated Term: </span>(.*)'
+    match = re.search(regex, html_block).group(1).strip()
+    return match
 
 def get_levels(html_block: str):
     regex = r'<span class="fieldlabeltext">Levels: </span>(.*)'
@@ -190,7 +198,9 @@ def get_location(html_block: str):
     match = re.search(regex, html_block)
     if not match:
         return
+    
     match = match.group(1).strip()
+    match = replace_html_char(match)
     
     # Edge case: <abbr title="To Be Announced">TBA</abbr>
     if "TBA" in match:
@@ -261,6 +271,7 @@ def get_instructors(html_block: str):
 def extract_section_data(html_block: str):    
     try:
         return Section(
+            semester        = get_semester(html_block),
             subject         = get_subject(html_block),
             class_code      = get_class_code(html_block),
             name            = get_name(html_block),
