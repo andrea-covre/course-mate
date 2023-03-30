@@ -4,7 +4,6 @@ import argparse
 from typing import List
 
 from tqdm import tqdm
-from sqlalchemy import Table, MetaData
 
 from api.planetscale_connection import get_db_session, Session
 from api.models.semester import Semester
@@ -15,11 +14,7 @@ from api.models.location import Location
 from courses_data.data_extractor import Section
 from courses_data.course_scraper import scrape_course_data
 
-
-INSTRUCTOR_TABLE_NAME = "instructor"
-SEMESTER_TABLE_NAME = "semester"
-CLASS_TABLE_NAME = "class"
-LOCATION_TABLE_NAME = "location"
+from db.utils import delete_all_entries_in_table
 
 
 def parse_args():
@@ -114,18 +109,10 @@ def get_location_info(location: str):
         room = "N/A"
         
     return building, room
-
-
-def delete_all_entries_in_table(session: Session, table_name: str):
-    metadata = MetaData()
-    metadata.reflect(bind=session.get_bind())
-    table = Table(table_name, metadata, autoload=True)
-    delete_stmt = table.delete()
-    session.execute(delete_stmt)
-    session.commit()
     
     
 def insert_semesters(session: Session, semesters: list):
+    print(f"\n> Priming DB with {len(semesters)} semesters...")
     for semester in tqdm(semesters):
         term, year = semester.split(" ")
         new_entry = {
@@ -136,6 +123,7 @@ def insert_semesters(session: Session, semesters: list):
     session.commit()
     
 def insert_instructors(session: Session, instructors: list):
+    print(f"\n> Priming DB with {len(instructors)} instructors...")
     for instructor in tqdm(instructors):
         first_name, middle_name, last_name = get_instructor_names(instructor)
         new_entry = {
@@ -148,6 +136,7 @@ def insert_instructors(session: Session, instructors: list):
         
         
 def insert_classes(session: Session, classes: list):
+    print(f"\n> Priming DB with {len(classes)} classes...")
     for class_ in tqdm(classes):
         subject, class_code = class_
         title = classes[class_]
@@ -166,6 +155,7 @@ def insert_classes(session: Session, classes: list):
         
         
 def insert_locations(session: Session, locations: list):
+    print(f"\n> Priming DB with {len(locations)} locations...")
     for location in tqdm(locations):
         building, room = get_location_info(location)
         new_entry = {
@@ -174,6 +164,26 @@ def insert_locations(session: Session, locations: list):
         }
         session.add(Location(new_entry))
         session.commit()
+        
+        
+def prime_course_data(session: Session, sections: List[Section]):
+    """
+    Prime the database with the unique semesters, instructors, classes, and locations
+    """
+    semesters, instructors, classes, locations = get_unique_semesters_instructors_classes_locations(sections)
+    
+    delete_all_entries_in_table(session, Semester.__tablename__)
+    insert_semesters(session, semesters)
+        
+    delete_all_entries_in_table(session, Instructor.__tablename__)
+    insert_instructors(session, instructors)
+    
+    delete_all_entries_in_table(session, Class.__tablename__)
+    insert_classes(session, classes)
+    
+    delete_all_entries_in_table(session, Location.__tablename__)
+    insert_locations(session, locations)
+
 
 def main():
     args = parse_args()
@@ -191,25 +201,8 @@ def main():
     # Create a session to the database
     session = get_db_session()
         
-    semesters, instructors, classes, locations = get_unique_semesters_instructors_classes_locations(sections)
-        
-    #Prime the database with the unique semesters, instructors, classes, and locations
-    
-    print(f"\n> Priming DB with {len(semesters)} semesters...")
-    delete_all_entries_in_table(session, SEMESTER_TABLE_NAME)
-    insert_semesters(session, semesters)
-        
-    print(f"\n> Priming DB with {len(instructors)} instructors...")
-    delete_all_entries_in_table(session, INSTRUCTOR_TABLE_NAME)
-    insert_instructors(session, instructors)
-    
-    print(f"\n> Priming DB with {len(classes)} classes...")
-    delete_all_entries_in_table(session, CLASS_TABLE_NAME)
-    insert_classes(session, classes)
-    
-    print(f"\n> Priming DB with {len(locations)} locations...")
-    delete_all_entries_in_table(session, LOCATION_TABLE_NAME)
-    insert_locations(session, locations)
+    # Prime the database with the unique semesters, instructors, classes, and locations
+    prime_course_data(session, sections)
 
     session.close()
 
