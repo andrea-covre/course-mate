@@ -1,3 +1,12 @@
 # MacOS
 *.DS_Store
+
+# Python
+*/__pycache__/
+
+# Pickle files
+*.pkl
+
+# DB env
 .env
+
