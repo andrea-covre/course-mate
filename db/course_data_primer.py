@@ -53,8 +53,8 @@ def is_valid_room(room: str):
 def get_unique_semesters_instructors_classes_locations(sections: List[Section]): 
     semesters = set()
     instructors = set()
-    classes = set()
     locations = set()
+    classes = dict()
 
     print(f"\n> Extracting unique semesters, instructors, classes, and locations from {len(sections)} sections...")
     for section in tqdm(sections):
@@ -67,7 +67,12 @@ def get_unique_semesters_instructors_classes_locations(sections: List[Section]):
                 
         subject = section.subject
         class_code = section.class_code
-        classes.add((subject, class_code))
+        
+        if (subject, class_code) in classes:
+            if section.name not in classes[(subject, class_code)]:
+                classes[(subject, class_code)].append(section.name)
+        else:
+            classes[(subject, class_code)] = [section.name]
         
     return semesters, instructors, classes, locations
 
@@ -145,9 +150,16 @@ def insert_instructors(session: Session, instructors: list):
 def insert_classes(session: Session, classes: list):
     for class_ in tqdm(classes):
         subject, class_code = class_
+        title = classes[class_]
+        if len(title) > 1:
+            title = "N/A"
+        else:
+            title = title[0]
+            
         new_entry = {
             "subject_code": subject,
             "class_number": class_code,
+            "name": title,
         }
         session.add(Class(new_entry))
         session.commit()

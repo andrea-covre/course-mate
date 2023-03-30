@@ -55,7 +55,9 @@ def get_name(html_block: str):
     regex = r'<a href=".+">([\s\S]+) - [0-9]{5} - [A-Z]+ [0-9]{4}[A-Z]? - [A-Z0-9]+</a></th>'   
     match = re.search(regex, html_block)
     if match:
-        return match.group(1)
+        match = match.group(1)
+        match = replace_html_char(match)
+        return match
 
 def get_section_code(html_block: str):
     regex = r'<a href=".+">[\s\S]+ - [0-9]{5} - [A-Z]+ [0-9]{4}[A-Z]? - ([A-Z0-9]+)</a></th>'   
