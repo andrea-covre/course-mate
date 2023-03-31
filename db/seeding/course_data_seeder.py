@@ -18,6 +18,9 @@ from courses_data.course_scraper import scrape_course_data
 
 from db.utils import delete_all_entries_in_table
 
+instructor_id_cache = dict()
+class_id_cache = dict()
+location_id_cache = dict()
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Seed the database with course data from either a file or from OSCAR directly')
@@ -138,7 +141,12 @@ def insert_instructors(session: Session, instructors: list):
             "middle_name": middle_name,
             "last_name": last_name,
         }
-        session.add(Instructor(new_entry))
+        
+        new_entry = Instructor(new_entry)
+        session.add(new_entry)
+        session.flush()
+        
+        instructor_id_cache[(first_name, middle_name, last_name)] = new_entry.id
         
         if idx % batch_size == 0:
             session.commit()
@@ -163,7 +171,12 @@ def insert_classes(session: Session, classes: list):
             "class_code": class_code,
             "title": title,
         }
-        session.add(Class(new_entry))
+        
+        new_entry = Class(new_entry)
+        session.add(new_entry)
+        session.flush()
+        
+        class_id_cache[(subject, class_code)] = new_entry.id
         
         if idx % batch_size == 0:
             session.commit()
@@ -179,7 +192,13 @@ def insert_locations(session: Session, locations: list):
             "building": building,
             "room": room,
         }
-        session.add(Location(new_entry))
+        
+        new_entry = Location(new_entry)
+        session.add(new_entry)
+        session.flush()
+        
+        location_id_cache[(building, room)] = new_entry.id
+        
     session.commit()
     
     
@@ -189,11 +208,8 @@ def insert_section_instructor_relationship(session: Session, section: Section):
     
     for instructor in section.instructors:
         first, middle, last = get_instructor_names(instructor)
-        instructor_id = session.query(Instructor.id).filter_by(
-                first_name=first, 
-                middle_name=middle,
-                last_name=last
-            ).scalar()
+        
+        instructor_id = instructor_id_cache[(first, middle, last)]
         
         new_entry = {
             "section_id": section.section_id,
@@ -208,16 +224,10 @@ def insert_sections(session: Session, sections: list):
     batch_size = 50
     for idx, section in tqdm(enumerate(sections), total=len(sections)):
         
-        class_id = session.query(Class.id).filter_by(
-                subject_code=section.subject, 
-                class_code=section.class_code
-            ).scalar()
+        class_id = class_id_cache[section.subject, section.class_code]
         
         building, room = get_location_info(section.location)
-        location_id = session.query(Location.id).filter_by(
-                building=building, 
-                room=room
-            ).scalar()
+        location_id = location_id_cache[(building, room)]
 
         new_entry = {
             "section_id": section.section_id,

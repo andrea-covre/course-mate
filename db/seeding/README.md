@@ -29,6 +29,8 @@ Tables primed:
 - `instructor`
 - `class`
 - `location`
+- `section`
+- `section_instructor`
 
 Source of data;
 - OSCAR, or .pkl file
