@@ -38,10 +38,10 @@ def prime_static_data(session: Session):
     """
     Prime the database with the static data (majors, subjects, etc.)
     """
-    delete_all_entries_in_table(session, Subject.__tablename__)
+    delete_all_entries_in_table(session, Subject)
     insert_subjects(session)
     
-    delete_all_entries_in_table(session, Major.__tablename__)
+    delete_all_entries_in_table(session, Major)
     insert_majors(session)
     
 

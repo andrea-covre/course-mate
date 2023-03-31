@@ -38,7 +38,7 @@ Source of data;
 To prime the database directly from OSCAR run the script using the command line by passing the following arguments:
 
 ```python
-python course_data_extractor.py --semester <semester> <year>
+python course_data_extractor.py --oscar <semester> <year>
 ```
 where `<semester>` is the name of the semester [`spring`|`summer`|`fall`], `<year>` is the year. Example:
 ```python

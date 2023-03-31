@@ -8,10 +8,12 @@ from tqdm import tqdm
 from api.planetscale_connection import get_db_session, Session
 from api.models.semester import Semester
 from api.models.instructor import Instructor
+from api.models.section_instructor import Section_Instructor
 from api.models.class_ import Class
 from api.models.location import Location
+from api.models.section import Section as SectionModel
 
-from courses_data.data_extractor import Section
+from courses_data.data_extractor import Section, MONTH_TO_SEMESTER
 from courses_data.course_scraper import scrape_course_data
 
 from db.utils import delete_all_entries_in_table
@@ -22,7 +24,7 @@ def parse_args():
 
     group = parser.add_mutually_exclusive_group(required=True)
     
-    group.add_argument('--semester', nargs=2, metavar=('SEMESTER', 'YEAR'),
+    group.add_argument('--oscar', nargs=2, metavar=('SEMESTER', 'YEAR'),
                         help='Semester and year (e.g., Spring 2023)')
     
     group.add_argument('--file', metavar='FILEPATH',
@@ -50,6 +52,8 @@ def get_unique_semesters_instructors_classes_locations(sections: List[Section]):
     instructors = set()
     locations = set()
     classes = dict()
+    
+    # max = 0
 
     print(f"\n> Extracting unique semesters, instructors, classes, and locations from {len(sections)} sections...")
     for section in tqdm(sections):
@@ -68,6 +72,13 @@ def get_unique_semesters_instructors_classes_locations(sections: List[Section]):
                 classes[(subject, class_code)].append(section.name)
         else:
             classes[(subject, class_code)] = [section.name]
+            
+        # var = section.campus
+        # if var and len(var) > max:
+        #     max = len(var)
+        
+    # print(f"Max section code length: {max}")
+    # exit()
         
     return semesters, instructors, classes, locations
 
@@ -114,17 +125,22 @@ def get_location_info(location: str):
 def insert_semesters(session: Session, semesters: list):
     print(f"\n> Priming DB with {len(semesters)} semesters...")
     for semester in tqdm(semesters):
-        term, year = semester.split(" ")
+        id = semester
+        semester = str(semester)
+        term = int(semester[-2:])
+        year = int(semester[:-2])
         new_entry = {
-            "term": term.strip(),
-            "semester_year": int(year.strip())
+            "id": id,
+            "term": MONTH_TO_SEMESTER[term],
+            "year": year
         }
         session.add(Semester(new_entry))
     session.commit()
     
 def insert_instructors(session: Session, instructors: list):
     print(f"\n> Priming DB with {len(instructors)} instructors...")
-    for instructor in tqdm(instructors):
+    batch_size = 400
+    for idx, instructor in tqdm(enumerate(instructors), total=len(instructors)):
         first_name, middle_name, last_name = get_instructor_names(instructor)
         new_entry = {
             "first_name": first_name,
@@ -132,12 +148,18 @@ def insert_instructors(session: Session, instructors: list):
             "last_name": last_name,
         }
         session.add(Instructor(new_entry))
-        session.commit()
+        
+        if idx % batch_size == 0:
+            session.commit()
+            
+    session.commit()
         
         
 def insert_classes(session: Session, classes: list):
     print(f"\n> Priming DB with {len(classes)} classes...")
-    for class_ in tqdm(classes):
+    # Using enumerate to commit to the database every batch_size entries
+    batch_size = 400
+    for idx, class_ in tqdm(enumerate(classes), total=len(classes)):
         subject, class_code = class_
         title = classes[class_]
         if len(title) > 1:
@@ -147,11 +169,15 @@ def insert_classes(session: Session, classes: list):
             
         new_entry = {
             "subject_code": subject,
-            "class_number": class_code,
-            "name": title,
+            "class_code": class_code,
+            "title": title,
         }
         session.add(Class(new_entry))
-        session.commit()
+        
+        if idx % batch_size == 0:
+            session.commit()
+            
+    session.commit()
         
         
 def insert_locations(session: Session, locations: list):
@@ -163,8 +189,70 @@ def insert_locations(session: Session, locations: list):
             "room": room,
         }
         session.add(Location(new_entry))
-        session.commit()
+    session.commit()
+    
+    
+def insert_section_instructor_relationship(session: Session, section: Section):
+    if not section.instructors:
+        return
+    
+    for instructor in section.instructors:
+        first, middle, last = get_instructor_names(instructor)
+        instructor_id = session.query(Instructor.id).filter_by(
+                first_name=first, 
+                middle_name=middle,
+                last_name=last
+            ).scalar()
         
+        new_entry = {
+            "section_id": section.section_id,
+            "instructor_id": instructor_id
+        }
+        
+        session.add(Section_Instructor(new_entry))
+        
+
+def insert_sections(session: Session, sections: list):
+    print(f"\n> Priming DB with {len(sections)} sections...")
+    batch_size = 50
+    for idx, section in tqdm(enumerate(sections), total=len(sections)):
+        
+        class_id = session.query(Class.id).filter_by(
+                subject_code=section.subject, 
+                class_code=section.class_code
+            ).scalar()
+        
+        building, room = get_location_info(section.location)
+        location_id = session.query(Location.id).filter_by(
+                building=building, 
+                room=room
+            ).scalar()
+
+        new_entry = {
+            "section_id": section.section_id,
+            "title": section.name,
+            "semester_id": section.semester,
+            "class_id": class_id,
+            "crn": section.crn,
+            "section_code": section.section_code,
+            "days": section.days,
+            "times": section.time,
+            "location_id": location_id,
+            "credits": section.credits,
+            "description": section.description,
+            "levels": section.levels,
+            "grade_basis": section.grade_basis,
+            "attributes": section.attributes,
+            "campus": section.campus,
+        }
+        
+        session.add(SectionModel(new_entry))
+        insert_section_instructor_relationship(session, section)
+        
+        if idx % batch_size == 0:
+            session.commit()
+            
+    session.commit()
         
 def prime_course_data(session: Session, sections: List[Section]):
     """
@@ -172,25 +260,29 @@ def prime_course_data(session: Session, sections: List[Section]):
     """
     semesters, instructors, classes, locations = get_unique_semesters_instructors_classes_locations(sections)
     
-    delete_all_entries_in_table(session, Semester.__tablename__)
+    delete_all_entries_in_table(session, Semester)
     insert_semesters(session, semesters)
         
-    delete_all_entries_in_table(session, Instructor.__tablename__)
+    delete_all_entries_in_table(session, Instructor)
     insert_instructors(session, instructors)
     
-    delete_all_entries_in_table(session, Class.__tablename__)
+    delete_all_entries_in_table(session, Class)
     insert_classes(session, classes)
     
-    delete_all_entries_in_table(session, Location.__tablename__)
+    delete_all_entries_in_table(session, Location)
     insert_locations(session, locations)
+    
+    delete_all_entries_in_table(session, SectionModel)
+    delete_all_entries_in_table(session, Section_Instructor)
+    insert_sections(session, sections)
 
 
 def main():
     args = parse_args()
     
     sections: List[Section]
-    if args.semester:
-        semester, year = args.semester
+    if args.oscar:
+        semester, year = args.oscar
         sections = scrape_course_data(year, semester)
         
     elif args.file:

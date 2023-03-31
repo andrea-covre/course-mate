@@ -8,6 +8,14 @@ HTML_TO_CHAR = {
     "&gt;": ">"
 }
 
+SEMESTER_TO_MONTH = {
+    "spring": 1,
+    "summer": 5,
+    "fall": 8,
+}
+
+MONTH_TO_SEMESTER = {v: k for k, v in SEMESTER_TO_MONTH.items()}
+
 
 def replace_html_char(html: str):
     for html_char in HTML_TO_CHAR.keys():
@@ -18,14 +26,14 @@ def replace_html_char(html: str):
 
 @dataclass
 class Section:
-    semester: str
+    semester: int
     subject: str
     class_code: int
     name: str
     section_code: str
     crn: int
     description: str
-    levels: list
+    levels: str
     grade_basis: list
     attributes: str
     campus: str
@@ -37,6 +45,11 @@ class Section:
     data_range: str
     schedule_type: str
     instructors: str
+    section_id: int = None
+    
+    def __post_init__(self):
+        # Creating unique section id with format XXXXXYYMM, where XXXXX is the crn and YY is the last two digits of the year and MM is the month
+        self.section_id = int(str(self.crn) + str(self.semester)[2:])
     
     
 def get_subject(html_block: str):
@@ -82,18 +95,20 @@ def get_description(html_block: str):
 def get_semester(html_block: str):
     regex = r'<span class="fieldlabeltext">Associated Term: </span>(.*)'
     match = re.search(regex, html_block).group(1).strip()
-    return match
+    semester, year = match.split(" ")
+    semester = f"{year}{SEMESTER_TO_MONTH[semester.lower()]:02d}"
+    semester = int(semester)
+    return semester
 
 def get_levels(html_block: str):
     regex = r'<span class="fieldlabeltext">Levels: </span>(.*)'
     match = re.search(regex, html_block).group(1).strip()
-    match = match.split(", ")
     return match
 
 def get_grade_basis(html_block: str):
     regex = r'<span class="fieldlabeltext">Grade Basis: </span>(.*)'
     match = re.search(regex, html_block).group(1).strip()
-    match = list(match)
+    #match = list(match)
     return match
 
 def get_attributes(html_block: str):
@@ -110,8 +125,7 @@ def get_attributes(html_block: str):
     if "Engr, &Sciences" in match:
         match = match.replace("Engr, &Sciences", "Engr & Sciences")
         
-    match = match.split(", ")
-    
+    #match = match.split(", ")
     return match
 
 def get_campus(html_block: str):
@@ -183,7 +197,7 @@ def get_days(html_block: str):
     match = re.search(regex, html_block)
     if match:
         match = match.group(1).strip()
-        return list(match)
+        return match
 
 def get_location(html_block: str):
     regex = r'<tr>' \
@@ -301,15 +315,13 @@ def extract_data(html: str):
     sections = []
     
     # Split the HTML file at each <th class="ddtitle"> element
-
-    print(type(html))
     html_blocks = html.split("<th class=\"ddtitle\" scope=\"colgroup\">")
     print(len(html_blocks), "HTML blocks found.")
     
     # Remove first block
     html_blocks = html_blocks[1:]
     
-    print("Extracting data from HTML section blocks...")
+    print("\n> Extracting data from HTML section blocks...")
     for html_block in tqdm(html_blocks):
         section = extract_section_data(html_block)
         sections.append(section)

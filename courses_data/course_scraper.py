@@ -4,7 +4,7 @@ import requests
 from time import time
 from bs4 import BeautifulSoup
 
-from courses_data.data_extractor import extract_data
+from courses_data.data_extractor import extract_data, SEMESTER_TO_MONTH
 
 URL = 'https://oscar.gatech.edu/bprod/bwckschd.p_get_crse_unsec'
 
@@ -56,12 +56,6 @@ SUBJECTS_LIST = [
     'MP', 'MSL', 'ML', 'MUSI', 'NS', 'NEUR', 'NRE', 'PHIL', 'PHYS', 'POL', 'PTFE', 'PSYC', 'PUBP', 
     'PUBJ', 'RUSS', 'SOC', 'SPAN', 'SWAH', 'VIP', 'WOLO'
     ]
-
-SEMESTER_TO_MONTH = {
-    "spring": 1,
-    "summer": 5,
-    "fall": 8,
-}
 
 
 def parse_args():
@@ -116,7 +110,7 @@ def scrape_course_data(year: int, semester: str):
     sections = extract_data(html)
     
     output_filename = f"{semester}_{year}_{int(time())}.pkl"
-    print(f"> Saving sections data to {output_filename}")
+    print(f"\n> Saving sections data to {output_filename}")
     with open(output_filename, 'wb') as f:
         pickle.dump(sections, f)
         
