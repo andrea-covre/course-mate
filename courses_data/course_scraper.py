@@ -121,6 +121,7 @@ def main():
     year = args.year
     semester = args.semester
     
+    print("\n\t >> Starting OSCAR Scraping procedure <<")
     scrape_course_data(year, semester)
     
 
