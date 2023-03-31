@@ -94,7 +94,7 @@ def get_request_data_body(year: int, semester: str):
 def scrape_course_data(year: int, semester: str):
     data_body = get_request_data_body(year, semester)
 
-    print(f"> Requesting data for the {semester.capitalize()} {year} term...")
+    print(f"> Requesting OSCAR for the {semester.capitalize()} {year} semester course data...")
     response = requests.post(URL, headers=HEADERS, data=data_body)
 
     print(f"> Status code: {response.status_code}")
