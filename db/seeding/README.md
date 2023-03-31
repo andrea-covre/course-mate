@@ -9,6 +9,8 @@ The database tables are populated in the following order:
 - `instructor`
 - `class`
 - `location`
+- `section`
+- `section_instructor`
 
 > **Warning** All entries in the corresponding tables are deleted before the new entries are inserted.  
 
