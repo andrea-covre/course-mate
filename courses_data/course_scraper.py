@@ -4,7 +4,7 @@ import requests
 from time import time
 from bs4 import BeautifulSoup
 
-from courses_data.data_extractor import extract_data
+from courses_data.data_extractor import extract_data, SEMESTER_TO_MONTH
 
 URL = 'https://oscar.gatech.edu/bprod/bwckschd.p_get_crse_unsec'
 
@@ -57,12 +57,6 @@ SUBJECTS_LIST = [
     'PUBJ', 'RUSS', 'SOC', 'SPAN', 'SWAH', 'VIP', 'WOLO'
     ]
 
-SEMESTER_TO_MONTH = {
-    "spring": 1,
-    "summer": 5,
-    "fall": 8,
-}
-
 
 def parse_args():
     # create the parser object
@@ -100,7 +94,7 @@ def get_request_data_body(year: int, semester: str):
 def scrape_course_data(year: int, semester: str):
     data_body = get_request_data_body(year, semester)
 
-    print(f"> Requesting data for the {semester.capitalize()} {year} term...")
+    print(f"> Requesting OSCAR for the {semester.capitalize()} {year} semester course data...")
     response = requests.post(URL, headers=HEADERS, data=data_body)
 
     print(f"> Status code: {response.status_code}")
@@ -116,7 +110,7 @@ def scrape_course_data(year: int, semester: str):
     sections = extract_data(html)
     
     output_filename = f"{semester}_{year}_{int(time())}.pkl"
-    print(f"> Saving sections data to {output_filename}")
+    print(f"\n> Saving sections data to {output_filename}")
     with open(output_filename, 'wb') as f:
         pickle.dump(sections, f)
         
@@ -127,6 +121,7 @@ def main():
     year = args.year
     semester = args.semester
     
+    print("\n\t >> Starting OSCAR Scraping procedure <<")
     scrape_course_data(year, semester)
     
 

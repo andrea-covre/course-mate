@@ -2,10 +2,13 @@
 *.DS_Store
 
 # Python
-*/__pycache__/
+*__pycache__
 
 # Pickle files
 *.pkl
+
+# Except those in courses_data/archive
+!courses_data/archive/*.pkl
 
 # DB env
 .env

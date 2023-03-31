@@ -1,10 +1,9 @@
 import enum
 
 from typing import List
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Enum
+from sqlalchemy.orm import Mapped, mapped_column
 
-class Base(DeclarativeBase):
-   pass
+from api.models.base import Base
 
 class Status(enum.Enum):
     pending = "Pending"
@@ -15,7 +14,7 @@ class Friendship(Base):
 
     account_id_1: Mapped[int] = mapped_column(primary_key=True)
     account_id_2: Mapped[int] = mapped_column(primary_key=True)
-    status: Mapped[Enum(Status)]
+    status: Mapped[Status]
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

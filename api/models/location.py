@@ -1,14 +1,13 @@
 from typing import Optional
 from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-class Base(DeclarativeBase):
-   pass
+from api.models.base import Base
 
 class Location(Base):
     __tablename__ = "location"
 
-    id: Mapped[int] = mapped_column(primary_key=True, auto_increment = True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     building: Mapped[str] = mapped_column(String(80))
     room: Mapped[str] = mapped_column(String(50))
     

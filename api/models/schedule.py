@@ -1,8 +1,7 @@
 from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-class Base(DeclarativeBase):
-   pass
+from api.models.base import Base
 
 class Schedule(Base):
     __tablename__ = "schedule"
