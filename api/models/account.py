@@ -1,6 +1,6 @@
 from typing import List
 from typing import Optional
-from sqlalchemy import String, UniqueConstraint
+from sqlalchemy import String, BigInteger, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from api.models.base import Base
@@ -13,7 +13,7 @@ class Account(Base):
     edu_email_address: Mapped[str] = mapped_column(String(320), unique=True)
     first_name: Mapped[str] = mapped_column(String(50))
     last_name: Mapped[str] = mapped_column(String(50))
-    phone_number: Mapped[str] = mapped_column(String(15), unique=True)
+    phone_number: Mapped[int] = mapped_column(BigInteger(), unique=True)
     grad_year: Mapped[int]
     major_id: Mapped[int]
     

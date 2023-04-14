@@ -15,7 +15,7 @@ USER_1 = DummyUser(
     edu_email_address = "andy@gt.edu",
     first_name = "Andy",
     last_name = "Cobra",
-    phone_number = 4041234567,
+    phone_number = 9999999999,
     grad_year = 2024,
     major_id = 54
 )

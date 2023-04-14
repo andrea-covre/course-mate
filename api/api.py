@@ -4,36 +4,41 @@ from sqlalchemy import select
 
 from api.utils import load_request_data
 from api.planetscale_connection import get_db_session
+from api.queries import Database
 from api.models import account, major, section, section_instructor, instructor, class_, location, semester
 
 session = get_db_session()
 app = Flask(__name__)
 api = Api(app)
+db = Database(session, commit_to_remote=True)
 
 #Example = /users?id=<user_id>
 @app.route('/users', methods=['GET'])
 def users():
     args = request.args
     id = args.get('id')
-    stmt = select(account.Account).where(
-        account.Account.id.in_([id])
-    )
-    results = session.scalar(stmt)
-    if not results:
+    user = db.get_account_by_id(id)
+    if not user:
         return {}, 200
     else:
-        return results.as_dict(), 200
+        return user.as_dict(), 200
     
 #Example = Create a post request with "/users/add" appended to the API url
 @app.route('/users/add', methods=['POST'])
-def testpost():
+def add_user():
     data = request.get_json(force=True)
-    print(type(data))
     data = load_request_data(data)
-    new_acc = account.Account(data)
-    session.add(new_acc)
-    session.commit()
-    return {'Code': 200, 'id': new_acc.id}
+    new_account_id = db.add_account(data)
+    return {'Code': 200, 'id': new_account_id}
+
+@app.route('/users/delete/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user_to_delete = db.get_account_by_id(user_id)
+    if user_to_delete is not None:
+        db.delete_account(user_to_delete)
+        return {'Code': 200, 'Message': f'User with ID {user_id} deleted successfully.'}
+    else:
+        return {'Code': 404, 'Message': f'User with ID {user_id} not found.'}
     
 @app.route('/users/update', methods=['PUT'])
 def update_account():
