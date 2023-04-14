@@ -33,7 +33,7 @@ def testpost():
     new_acc = account.Account(data)
     session.add(new_acc)
     session.commit()
-    return {'Code': 200}
+    return {'Code': 200, 'id': new_acc.id}
     
 @app.route('/users/update', methods=['PUT'])
 def update_account():
