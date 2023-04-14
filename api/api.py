@@ -1,9 +1,10 @@
-import json 
 from flask import Flask, request, jsonify
 from flask_restful import Api
-from planetscale_connection import get_db_session
-from models import major, account, schedule, section, semester, class_tbl, location, instructor
 from sqlalchemy import select
+
+from api.utils import load_request_data
+from api.planetscale_connection import get_db_session
+from api.models import account, major, section, section_instructor, instructor, class_, location, semester
 
 session = get_db_session()
 app = Flask(__name__)
@@ -27,7 +28,8 @@ def users():
 @app.route('/users/add', methods=['POST'])
 def testpost():
     data = request.get_json(force=True)
-    data = json.loads(data)
+    print(type(data))
+    data = load_request_data(data)
     new_acc = account.Account(data)
     session.add(new_acc)
     session.commit()
@@ -36,7 +38,7 @@ def testpost():
 @app.route('/users/update', methods=['PUT'])
 def update_account():
     data = request.get_json(force=True)
-    data = json.loads(data)
+    data = load_request_data(data)
     id = data['id']
     stmt = select(account.Account).where(
         account.Account.id.in_([id])
@@ -53,9 +55,9 @@ def update_account():
 #TO BE TESTED
 #Example = /users/schedule?id=<user_id>
 @app.route('/users/schedule', methods=['GET'])
-def update_account():
+def update_account_schedule():
     data = request.get_json(force=True)
-    data = json.loads(data)
+    data = load_request_data(data)
     id = data['account_id']
     stmt = select(schedule.Schedule).where(
         schedule.Schedule.account_id.in_([id])
@@ -83,8 +85,8 @@ def update_account():
         curr_schedule['semester'] = curr_semester.as_dict()
 
         class_id = curr_section.class_id
-        curr_class = session.scalar(select(class_tbl.Class).where(
-            class_tbl.Class.id.in_([class_id])
+        curr_class = session.scalar(select(class_.Class).where(
+            class_.Class.id.in_([class_id])
         ))
         curr_schedule['class'] = curr_class.as_dict()
         curr_schedule['crn'] = curr_section.crn
