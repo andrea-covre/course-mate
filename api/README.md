@@ -3,11 +3,11 @@
 ## List of APIs implemented
 ### User
 
-| Request Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/users?id=<user\_id>` | Gets user given the user id |
-| `POST` | `/users/add` | Creates new user |
-| `DELETE` | `/users/delete?id=<user\_id` | Deletes user given the user id |
+| Request Method | Endpoint | Description | Body |
+| --- | --- | --- | --- |
+| `GET` | `/users?id=<user_id>` | Gets user given the user id | |
+| `POST` | `/users/add` | Creates new user | {<br>"email_address": <br> "edu_email_address": <br> "first_name": <br> "last_name": <br> "phone_number": <br> "grad_year": <br> "major_id": <br> }|
+| `DELETE` | `/users/delete?id=<user_id>` | Deletes user given the user id | |
 
 ### Major
 | Request Method | Endpoint | Description |
