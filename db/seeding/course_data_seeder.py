@@ -299,7 +299,7 @@ def main():
     sections = get_sections_from_args(args)
         
     # Create a session to the database
-    session = get_db_session()
+    session = get_db_session(autocommit=False)
         
     # Seed the database with the unique semesters, instructors, classes, and locations
     seed_course_data(session, sections)

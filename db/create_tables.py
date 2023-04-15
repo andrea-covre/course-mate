@@ -39,7 +39,7 @@ def create_all_tables(session: Session):
 
 
 def main():
-    session = get_db_session()
+    session = get_db_session(autocommit=False)
     create_all_tables(session)
     session.close()
 

@@ -7,23 +7,23 @@ from api.planetscale_connection import get_db_session
 from api.queries import Database
 from api.models import account, major, section, section_instructor, instructor, class_, location, semester
 
-session = get_db_session()
+session = get_db_session(autocommit=True)
 app = Flask(__name__)
 api = Api(app)
-db = Database(session, commit_to_remote=True)
+db = Database(session)
 
-#Example = /users?id=<user_id>
+# GET /users?id=<user_id>
 @app.route('/users', methods=['GET'])
 def users():
     args = request.args
     id = args.get('id')
     user = db.get_account_by_id(id)
-    if not user:
-        return {}, 200
-    else:
+    if user:
         return user.as_dict(), 200
+    else:
+        return {}, 404
     
-#Example = Create a post request with "/users/add" appended to the API url
+# POST /users/add
 @app.route('/users/add', methods=['POST'])
 def add_user():
     data = request.get_json(force=True)
@@ -31,14 +31,24 @@ def add_user():
     new_account_id = db.add_account(data)
     return {'Code': 200, 'id': new_account_id}
 
-@app.route('/users/delete/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    user_to_delete = db.get_account_by_id(user_id)
+# DELETE /users/delete?id=<user_id>
+@app.route('/users/delete', methods=['DELETE'])
+def delete_user():
+    args = request.args
+    id = args.get('id')
+    user_to_delete = db.get_account_by_id(id)
+    
     if user_to_delete is not None:
         db.delete_account(user_to_delete)
-        return {'Code': 200, 'Message': f'User with ID {user_id} deleted successfully.'}
+        return {'Code': 200, 'Message': f'User with ID {id} deleted successfully.'}
     else:
-        return {'Code': 404, 'Message': f'User with ID {user_id} not found.'}
+        return {'Code': 404, 'Message': f'User with ID {id} not found.'}
+    
+# GET /majors
+@app.route('/majors', methods=['GET'])
+def get_majors():
+    majors = db.get_majors()
+    return {'Code': 200, "majors": majors}
     
 @app.route('/users/update', methods=['PUT'])
 def update_account():
