@@ -3,8 +3,9 @@ import argparse
 from flask import Flask
 from flask_restful import Api
  
-from api.endpoints.users import users_blueprint
-from api.endpoints.majors import majors_blueprint
+from api.endpoints.users import blueprint as users_blueprint
+from api.endpoints.majors import blueprint as majors_blueprint
+from api.endpoints.schedule import blueprint as schedule_blueprint
 
 
 app = Flask(__name__)
@@ -12,6 +13,7 @@ api = Api(app)
 
 app.register_blueprint(users_blueprint)
 app.register_blueprint(majors_blueprint)
+app.register_blueprint(schedule_blueprint)
 
 # #Example = /users/schedule?id=<user_id>
 # @app.route('/users/schedule', methods=['GET'])
@@ -78,4 +80,3 @@ if __name__ == '__main__':
         
     else:
         app.run(debug=True, port=5000)
-

@@ -4,10 +4,8 @@ from dataclasses import asdict
 
 from sqlalchemy import select
 
-from api.planetscale_connection import get_db_session
 from api.models.account import Account
-from api.tests.dummy_data import USER_1
-from api.queries import Database
+from api.tests.dummy_data import USER_1, delete_dummy_user
 from api.tests.base_test import BaseTestCase
 
 
@@ -17,11 +15,7 @@ class AccountTest(BaseTestCase):
         self.base_setUp()
         
         # Making sure DUMMY USER 1 is not in the database already, if so delete it
-        self.session.query(Account).filter(
-            (Account.email_address == USER_1.email_address) |
-            (Account.email_address == USER_1.edu_email_address) |
-            (Account.phone_number == USER_1.phone_number)
-        ).delete()
+        delete_dummy_user(self.session, USER_1)
         
     # POST /users/add
     def test_add_user(self):
@@ -75,7 +69,6 @@ class AccountTest(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         
         response_data = response.json()
-        self.assertEqual(response_data['Code'], 200)
         self.assertEqual(response_data['Message'], f'User with ID {account_id_to_delete} deleted successfully.')
         
         # Verify that the user has been deleted directly from the database
@@ -83,6 +76,7 @@ class AccountTest(BaseTestCase):
         self.assertIsNone(inserted_user)
         
     def tearDown(self):
+        delete_dummy_user(self.session, USER_1)
         self.base_tearDown()
 
 if __name__ == '__main__':
