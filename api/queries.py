@@ -79,16 +79,6 @@ class Database():
         
     
     def get_user_schedule(self, user_id, semester_id):
-        """
-        Retunrs a list of tuples of the form (
-                Class.title,
-                Class.subject_code,
-                Class.class_code,
-                Section.section_code,
-                Section.crn,
-                Section.section_id
-            )
-        """
         query = (
             select(
                 Class.title,
@@ -113,3 +103,37 @@ class Database():
             schedule.append((title, subject_code, class_code, section_code, crn, section_id))
             
         return schedule
+    
+    
+    def get_common_schedule(self, user_1_id, user_2_id, semester_id):
+        s1 = aliased(Schedule)
+        s2 = aliased(Schedule)
+        query = (
+            select(
+                Class.title,
+                Class.subject_code,
+                Class.class_code,
+                Section.section_code,
+                Section.crn,
+                Section.section_id
+            )
+            .select_from(s1)
+            .join(s2, s1.section_id == s2.section_id and s1.account_id != s2.account_id)
+            .join(Section, s1.section_id == Section.section_id)
+            .join(Class, Section.class_id == Class.id)
+            .where(
+                (s1.account_id == user_1_id) &
+                (s2.account_id == user_2_id) &
+                (Section.semester_id == semester_id)
+            )
+        )
+        
+        results = self.session.execute(query)
+            
+        schedule = []
+        for row in results:
+            title, subject_code, class_code, section_code, crn, section_id = row
+            schedule.append((title, subject_code, class_code, section_code, crn, section_id))
+            
+        return schedule
+    

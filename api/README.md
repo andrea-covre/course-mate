@@ -14,7 +14,8 @@
 | Request Method | Endpoint | Description | Body | Has Unittest |
 | --- | --- | --- | --- | --- |
 | `POST` | `/schedule/add` | Adds a section to the user schedule | {<br>"user_id": <br> "semester_id": <br> "crn": <br> } <br> *or* --- <br> {<br>"user_id": <br> "semester_id": <br> "subject_code": <br> "class_number": <br> "section_code": <br> } | Yes |
-| `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of tuples of the form (class_title, cladd_subject, class_number, section_code, crn, section_id)|  | No |
+| `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of tuples of the form `(class_title, cladd_subject, class_number, section_code, crn, section_id)`|  | No |
+| `GET` | `/schedule/common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>` | Gets the common classes given two users ids and semester id. Returns a list of tuples of the form `(class_title, cladd_subject, class_number, section_code, crn, section_id)`|  | No |
 
 ### Major
 | Request Method | Endpoint | Description | Has Unittest |

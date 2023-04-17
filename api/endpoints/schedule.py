@@ -68,5 +68,20 @@ def get_schedule():
     if schedule:
         return schedule, 200
     else:
-        return {}, 401
+        return {}, 404
+    
+    
+# GET /common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>
+@blueprint.route('/common', methods=['GET'])
+def get_common_schedule():
+    args = request.args
+    user_1_id = args.get('id_1')
+    user_2_id = args.get('id_2')
+    semester_id = args.get('semester')
+    
+    schedule = db.get_common_schedule(user_1_id, user_2_id, semester_id)
+    if schedule:
+        return schedule, 200
+    else:
+        return {}, 404
     
