@@ -15,8 +15,14 @@
 | `GET` | `/majors` | Gets all majors and their corresponding id |
 
 ## Instructions
-### Run the API Server
+### Run the API Server Locally
+To run the server locally on port `5000`, run the following command:
+```bash
+python -m api.api
+```
 
+### Run the API Server Locally
+To run the server publicly on port `8080`, run the following command:
 ```bash
 python -m api.api
 ```
