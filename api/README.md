@@ -27,7 +27,7 @@ python -m api.api
 #### Run the API Server Publicly
 To run the server publicly on port `8080`, run the following command:
 ```bash
-python -m api.api
+python -m api.api -p
 ```
 
 ---
