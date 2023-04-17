@@ -8,6 +8,7 @@ from api.models.major import Major
 from api.models.section import Section
 from api.models.schedule import Schedule
 from api.models.class_ import Class
+from api.models.friendship import Friendship, Status
 
 
 class Database():
@@ -137,3 +138,36 @@ class Database():
             
         return schedule
     
+    
+    def request_friendship(self, sender_id, receiver_id):
+        new_entry = {
+            "account_id_1": sender_id,
+            "account_id_2": receiver_id,
+            "status": Status.pending
+        }
+        new_friendship = Friendship(new_entry)
+        self.session.add(new_friendship)
+        self.session.commit()
+        
+        
+    def accept_friendship(self, sender_id, receiver_id):
+        stmt = select(Friendship).where(
+        Friendship.account_id_1.in_([sender_id]) 
+            ).where(
+                Friendship.account_id_2.in_([receiver_id]) 
+            )
+        for obj in self.session.scalars(stmt):
+            friendship_object = obj
+        friendship_object.status = Status.accepted
+        self.session.commit()
+        
+        
+    def delete_friendship(self, sender_id, receiver_id):
+        stmt = select(Friendship).where(
+            Friendship.account_id_1 == sender_id, 
+            Friendship.account_id_2 == receiver_id)
+        friendship = self.session.scalar(stmt)
+        self.session.delete(friendship)
+        self.session.commit()
+        
+        

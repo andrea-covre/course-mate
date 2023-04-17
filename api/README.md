@@ -22,6 +22,13 @@
 | --- | --- | --- | --- |
 | `GET` | `/majors` | Gets all majors and their corresponding id | Yes |
 
+### Friendship
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/request?id_1=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
+| `GET` | `/accept?id_1=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
+| `GET` | `/delete?id_1=<sender_id>&receiver_id=<receiver_id>` | Delete a friendship request from sender_id to receiver_id | No |
+
 ## Instructions
 
 ### Run the API Server

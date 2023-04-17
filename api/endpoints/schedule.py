@@ -80,6 +80,7 @@ def get_common_schedule():
     semester_id = args.get('semester')
     
     schedule = db.get_common_schedule(user_1_id, user_2_id, semester_id)
+    
     if schedule:
         return schedule, 200
     else:
