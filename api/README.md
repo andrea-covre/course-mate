@@ -15,13 +15,16 @@
 | `GET` | `/majors` | Gets all majors and their corresponding id |
 
 ## Instructions
-### Run the API Server Locally
+
+### Run the API Server
+
+#### Run the API Server Locally
 To run the server locally on port `5000`, run the following command:
 ```bash
 python -m api.api
 ```
 
-### Run the API Server Locally
+#### Run the API Server Publicly
 To run the server publicly on port `8080`, run the following command:
 ```bash
 python -m api.api
@@ -29,6 +32,13 @@ python -m api.api
 
 ### Run the unittests
 Make sure the API server is running before running the tests.
+
+#### Run the unittests Locally
 ```bash
 python -m api.tests.runner
+```
+
+#### Run the unittests on Public Address
+```bash
+python -m api.tests.runner [-p <public_address>]
 ```
