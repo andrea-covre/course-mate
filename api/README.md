@@ -30,6 +30,8 @@ To run the server publicly on port `8080`, run the following command:
 python -m api.api
 ```
 
+---
+
 ### Run the unittests
 Make sure the API server is running before running the tests.
 
