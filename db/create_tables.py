@@ -18,16 +18,16 @@ from db.utils import drop_table_if_exists, create_table
 
 ALL_TABLES = [
     Account,
-    Class,
-    Friendship,
-    Instructor,
-    Location,
-    Major,
-    Schedule,
-    Section_Instructor,
-    Semester,
-    Subject,
-    Section
+    # Class,
+    # Friendship,
+    # Instructor,
+    # Location,
+    # Major,
+    # Schedule,
+    # Section_Instructor,
+    # Semester,
+    # Subject,
+    # Section
 ]
 
 
@@ -39,7 +39,7 @@ def create_all_tables(session: Session):
 
 
 def main():
-    session = get_db_session()
+    session = get_db_session(autocommit=False)
     create_all_tables(session)
     session.close()
 

@@ -18,7 +18,7 @@ def main():
     args = parse_args()
     sections = get_sections_from_args(args)
     
-    session = get_db_session()
+    session = get_db_session(autocommit=False)
     seed(session, sections)
     session.close()
     

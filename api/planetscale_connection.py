@@ -5,9 +5,8 @@ import sqlalchemy as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from api.models.major import Major
 
-def get_db_session():
+def get_db_session(autocommit=True):
     load_dotenv()
     connection = MySQLdb.connect(
     host= os.getenv("HOST"),
@@ -21,5 +20,9 @@ def get_db_session():
     )
 
     engine = db.create_engine('mysql+mysqldb://', creator=lambda: connection)
+    
+    if autocommit:
+        engine = engine.execution_options(isolation_level="AUTOCOMMIT")
+        
     session = Session(engine)
     return session

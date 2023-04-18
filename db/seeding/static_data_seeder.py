@@ -46,7 +46,7 @@ def seed_static_data(session: Session):
     
 
 def main():
-    session = get_db_session()
+    session = get_db_session(autocommit=False)
     seed_static_data(session)
     session.close()
 

@@ -1,110 +1,42 @@
-import json 
-from flask import Flask, request, jsonify
-from flask_restful import Api
-from planetscale_connection import get_db_session
-from models import major, account, schedule, section, semester, class_tbl, location, instructor
-from sqlalchemy import select
+import sys
+import argparse
 
-session = get_db_session()
+from flask import Flask
+from flask_restful import Api
+ 
+from api.endpoints.users import blueprint as users_blueprint
+from api.endpoints.majors import blueprint as majors_blueprint
+from api.endpoints.schedule import blueprint as schedule_blueprint
+from api.endpoints.semester import blueprint as semester_blueprint
+from api.endpoints.friendship import blueprint as friendship_blueprint
+
+
 app = Flask(__name__)
 api = Api(app)
 
-#Example = /users?id=<user_id>
-@app.route('/users', methods=['GET'])
-def users():
-    args = request.args
-    id = args.get('id')
-    stmt = select(account.Account).where(
-        account.Account.id.in_([id])
-    )
-    results = session.scalar(stmt)
-    if not results:
-        return {}, 200
-    else:
-        return results.as_dict(), 200
-    
-#Example = Create a post request with "/users/add" appended to the API url
-@app.route('/users/add', methods=['POST'])
-def testpost():
-    data = request.get_json(force=True)
-    data = json.loads(data)
-    new_acc = account.Account(data)
-    session.add(new_acc)
-    session.commit()
-    return {'Code': 200}
-    
-@app.route('/users/update', methods=['PUT'])
-def update_account():
-    data = request.get_json(force=True)
-    data = json.loads(data)
-    id = data['id']
-    stmt = select(account.Account).where(
-        account.Account.id.in_([id])
-    )
-    for obj in session.scalars(stmt):
-        feature = obj
+app.register_blueprint(users_blueprint)
+app.register_blueprint(majors_blueprint)
+app.register_blueprint(schedule_blueprint)
+app.register_blueprint(friendship_blueprint)
+app.register_blueprint(semester_blueprint)
 
-    for key in data:
-        setattr(feature, key, data[key])
-        
-    session.commit()
-    return feature.as_dict(), 200
 
-#TO BE TESTED
-#Example = /users/schedule?id=<user_id>
-@app.route('/users/schedule', methods=['GET'])
-def update_account():
-    data = request.get_json(force=True)
-    data = json.loads(data)
-    id = data['account_id']
-    stmt = select(schedule.Schedule).where(
-        schedule.Schedule.account_id.in_([id])
-    )
-    schedule_objects = []
-    for obj in session.scalars(stmt):
-        schedule_objects.append(obj)
-
-    sections = []
-    for schedule_object in schedule_objects:
-        section_id = schedule_object.section_id
-        stmt = select(section.Section).where(
-            section.Section.id.in_([section_id])
-        )
-        curr_section = session.scalar(stmt)
-        sections.append(curr_section)
-
-    schedule = []
-    for curr_section in sections:
-        curr_schedule = {}
-        semester_id = curr_section.semester_id
-        curr_semester = session.scalar(select(semester.Semester).where(
-            semester.Semester.id.in_([semester_id])
-        ))
-        curr_schedule['semester'] = curr_semester.as_dict()
-
-        class_id = curr_section.class_id
-        curr_class = session.scalar(select(class_tbl.Class).where(
-            class_tbl.Class.id.in_([class_id])
-        ))
-        curr_schedule['class'] = curr_class.as_dict()
-        curr_schedule['crn'] = curr_section.crn
-        curr_schedule['section_name'] = curr_section.section_name
-        instructor_id = curr_section.instructor_id
-        curr_instructor = session.scalar(select(instructor.Instructor).where(
-            instructor.Instructor.id.in_([instructor_id])
-        ))
-        curr_schedule['instructor'] = curr_instructor.as_dict()
-        curr_schedule['times'] = curr_section.times
-
-        location_id = curr_section.location_id
-        curr_location = session.scalar(select(location.Location).where(
-            location.Location.id.in_([location_id])
-        ))
-        curr_schedule['semester'] = curr_location.as_dict()
-        schedule.append(curr_schedule)
-
-    return schedule, 200
-    
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    parser = argparse.ArgumentParser(description='Run Flask app locally or publicly')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-p', '--public', action='store_true', help='run the app publicly')
+    group.add_argument('-e', '--endpoints', action='store_true', help='print out all the app\'s endpoints')
+    args = parser.parse_args()
+    
+    if args.endpoints:
+        print('Endpoints:')
+        for rule in app.url_map.iter_rules():
+            methods = str(",".join(rule.methods))
+            print("  {:<30} {}".format(str(rule), methods))
+        sys.exit(0)
 
+    if args.public:
+        app.run(host='0.0.0.0', port=8080)
+        
+    else:
+        app.run(debug=True, port=5000)
