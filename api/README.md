@@ -14,8 +14,8 @@
 | Request Method | Endpoint | Description | Body | Has Unittest |
 | --- | --- | --- | --- | --- |
 | `POST` | `/schedule/add` | Adds a section to the user schedule | {<br>"user_id": <br> "semester_id": <br> "crn": <br> } <br> *or* --- <br> {<br>"user_id": <br> "semester_id": <br> "subject_code": <br> "class_number": <br> "section_code": <br> } | Yes |
-| `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of tuples of the form `(class_title, cladd_subject, class_number, section_code, crn, section_id)`|  | No |
-| `GET` | `/schedule/common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>` | Gets the common classes given two users ids and semester id. Returns a list of tuples of the form `(class_title, cladd_subject, class_number, section_code, crn, section_id)`|  | No |
+| `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of dictionaries with `title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
+| `GET` | `/schedule/common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>` | Gets the common classes given two users ids and semester id. Returns a list of dictionaries with `class_title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
 
 ### Major
 | Request Method | Endpoint | Description | Has Unittest |
@@ -25,9 +25,11 @@
 ### Friendship
 | Request Method | Endpoint | Description | Has Unittest |
 | --- | --- | --- | --- |
-| `GET` | `/request?id_1=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
-| `GET` | `/accept?id_1=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
-| `GET` | `/delete?id_1=<sender_id>&receiver_id=<receiver_id>` | Delete a friendship request from sender_id to receiver_id | No |
+| `GET` | `/request?sender_id=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
+| `GET` | `/accept?sender_id=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
+| `GET` | `/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
+| `GET` | `GET /list?user_id=<user_id>` | Get all friendships given the user_id, returns a dictionary of the form: `{"friends": [list of ids], "incoming_requests": [list of ids], "outgoing_requests": [list of ids]}` | No |
+| `GET` | `GET /get_by_section?user_id=<user_id>&section_id=<section_id>` | Get all friends taking a given section, returns a list of dictionaries with `first_name`, `last_name`, `id` as keys. | No |
 
 ## Instructions
 

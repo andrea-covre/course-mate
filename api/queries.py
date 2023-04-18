@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from sqlalchemy import select
+from sqlalchemy import select, or_, and_
 from sqlalchemy.orm import Session, aliased
 
 from api.models.account import Account
@@ -101,7 +101,14 @@ class Database():
         schedule = []
         for row in results:
             title, subject_code, class_code, section_code, crn, section_id = row
-            schedule.append((title, subject_code, class_code, section_code, crn, section_id))
+            schedule.append({
+                "title": title,
+                "subject_code": subject_code,
+                "class_code": class_code,
+                "section_code": section_code,
+                "crn": crn,
+                "section_id": section_id
+            })
             
         return schedule
     
@@ -134,7 +141,14 @@ class Database():
         schedule = []
         for row in results:
             title, subject_code, class_code, section_code, crn, section_id = row
-            schedule.append((title, subject_code, class_code, section_code, crn, section_id))
+            schedule.append({
+                "title": title,
+                "subject_code": subject_code,
+                "class_code": class_code,
+                "section_code": section_code,
+                "crn": crn,
+                "section_id": section_id
+            })
             
         return schedule
     
@@ -162,12 +176,80 @@ class Database():
         self.session.commit()
         
         
-    def delete_friendship(self, sender_id, receiver_id):
+    def delete_friendship(self, user1_id, user2_id):
         stmt = select(Friendship).where(
-            Friendship.account_id_1 == sender_id, 
-            Friendship.account_id_2 == receiver_id)
+            or_(
+                and_(
+                    Friendship.account_id_1 == user1_id, 
+                    Friendship.account_id_2 == user2_id
+                    ),
+                and_(
+                    Friendship.account_id_1 == user2_id,
+                    Friendship.account_id_2 == user1_id
+                    )
+            ))
         friendship = self.session.scalar(stmt)
         self.session.delete(friendship)
         self.session.commit()
+        
+        
+    def get_friendships(self, user_id):
+        # Getting all friendships
+        stmt = select(Friendship).where(
+            or_(Friendship.account_id_1 == user_id, Friendship.account_id_2 == user_id))
+        friendships = self.session.execute(stmt).all()
+        
+        accepted = []
+        outgoing = []
+        incoming = []
+        
+        user_id = int(user_id)
+        
+        for friendship in friendships:
+            friendship = friendship[0].as_dict()
+            sender_id = friendship['account_id_1']
+            receiver_id = friendship['account_id_2']
+            
+            if friendship['status'] == Status.accepted:
+                if sender_id == user_id:
+                    accepted.append(receiver_id)
+                else:
+                    accepted.append(sender_id)
+            else:
+                if sender_id == user_id:
+                    outgoing.append(receiver_id)
+                else:
+                    incoming.append(sender_id)
+
+        friendships = {
+            "friends": accepted,
+            "outgoing_requests": outgoing,
+            "incoming_requests": incoming
+        }
+        
+        return friendships
+    
+    
+    def get_friendships_by_section(self, user_id, section_id):
+        accounts = (self.session.query(Account).distinct().
+            join(Friendship, ((Account.id == Friendship.account_id_2) | (Account.id == Friendship.account_id_1))).
+            join(Schedule, Account.id == Schedule.account_id).
+            filter(((Friendship.account_id_1 == user_id) | (Friendship.account_id_2 == user_id)), 
+                (Friendship.status == 'accepted'),
+                (Schedule.section_id == section_id),
+                (Account.id != user_id)).all())
+            
+        friends = []
+        for account in accounts:
+            account = account.as_dict()
+            friends.append({
+                    'first_name': account['first_name'],
+                    'last_name': account['last_name'],
+                    'id': account['id'],
+                })
+            
+        return friends
+        
+
         
         
