@@ -3,11 +3,12 @@ from typing import Tuple
 from sqlalchemy import select, or_, and_
 from sqlalchemy.orm import Session, aliased
 
-from api.models.account import Account
 from api.models.major import Major
-from api.models.section import Section
-from api.models.schedule import Schedule
 from api.models.class_ import Class
+from api.models.section import Section
+from api.models.account import Account
+from api.models.schedule import Schedule
+from api.models.semester import Semester
 from api.models.friendship import Friendship, Status
 
 
@@ -249,6 +250,14 @@ class Database():
                 })
             
         return friends
+    
+    def get_semesters(self):
+        results = self.session.query(Semester).all()
+        semesters = []
+        for semester in results:
+            semester = semester.as_dict()
+            semesters.append(semester)
+        return semesters
         
 
         

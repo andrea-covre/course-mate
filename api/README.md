@@ -25,11 +25,16 @@
 ### Friendship
 | Request Method | Endpoint | Description | Has Unittest |
 | --- | --- | --- | --- |
-| `GET` | `/request?sender_id=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
-| `GET` | `/accept?sender_id=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
-| `GET` | `/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
-| `GET` | `GET /list?user_id=<user_id>` | Get all friendships given the user_id, returns a dictionary of the form: `{"friends": [list of ids], "incoming_requests": [list of ids], "outgoing_requests": [list of ids]}` | No |
-| `GET` | `GET /get_by_section?user_id=<user_id>&section_id=<section_id>` | Get all friends taking a given section, returns a list of dictionaries with `first_name`, `last_name`, `id` as keys. | No |
+| `GET` | `/friendship/request?sender_id=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
+| `GET` | `/friendship/accept?sender_id=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
+| `GET` | `/friendship/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
+| `GET` | `/friendship/list?user_id=<user_id>` | Get all friendships given the user_id, returns a dictionary of the form: `{"friends": [list of ids], "incoming_requests": [list of ids], "outgoing_requests": [list of ids]}` | No |
+| `GET` | `/friendship/get_by_section?user_id=<user_id>&section_id=<section_id>` | Get all friends taking a given section, returns a list of dictionaries with `first_name`, `last_name`, `id` as keys. | No |
+
+### Semester
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/semester` | Get all semesters, returns a list of dictionaries with `id`, `term`, `year` as keys | No |
 
 ## Instructions
 
