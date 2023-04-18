@@ -20,6 +20,26 @@ class Database():
         stmt = select(Account).where(Account.id == id)
         account = self.session.scalar(stmt)
         return account
+    
+    def get_account_by_phone_number(self, phone_number) -> Account:
+        stmt = select(Account).where(Account.phone_number == phone_number)
+        account = self.session.scalar(stmt)
+        return account
+    
+    def get_account_by_email(self, email) -> Account:
+        stmt = select(Account).where(Account.email_address == email)
+        account = self.session.scalar(stmt)
+        return account
+    
+    def get_account_by_edu_email(self, edu_email) -> Account:
+        stmt = select(Account).where(Account.edu_email_address == edu_email)
+        account = self.session.scalar(stmt)
+        return account
+    
+    def get_account_by_name(self, first_name, last_name) -> Account:
+        stmt = select(Account).where(and_(Account.first_name == first_name, Account.last_name == last_name))
+        account = self.session.scalar(stmt)
+        return account
         
     def add_account(self, account_data: dict) -> int:
         new_account = Account(account_data)
