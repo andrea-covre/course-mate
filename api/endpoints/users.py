@@ -12,7 +12,28 @@ blueprint = Blueprint(ROUTE_PREFIX, __name__, url_prefix=ROUTE_PREFIX)
 def users():
     args = request.args
     id = args.get('id')
-    user = db.get_account_by_id(id)
+    phone_number = args.get('phone_number')
+    email = args.get('email')
+    edu_email = args.get('edu_email')
+    first_name = args.get('first_name')
+    last_name = args.get('last_name')
+    
+    if id is not None:
+        user = db.get_account_by_id(id)
+        
+    elif phone_number is not None:
+        user = db.get_account_by_phone_number(phone_number)
+        
+    elif email is not None:
+        user = db.get_account_by_email(email)
+        
+    elif edu_email is not None:
+        user = db.get_account_by_edu_email(edu_email)
+        
+    elif first_name is not None and last_name is not None:
+        user = db.get_account_by_name(first_name, last_name)
+    
+    
     if user:
         return user.as_dict(), 200
     else:
