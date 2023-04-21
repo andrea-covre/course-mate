@@ -40,45 +40,45 @@ class ScheduleTest(BaseTestCase):
         
         SECTION_1.id = dummy_section.section_id
         
-    # # GET /schedule/add
-    # def test_add_section_by_crn(self):
-    #     ENDPOINT = "schedule/add"
+    # GET /schedule/add
+    def test_add_section_by_crn(self):
+        ENDPOINT = "schedule/add"
         
-    #     section_data = {
-    #         "user_id": user_id,
-    #         "semester_id": SECTION_1.semester_id,
-    #         "crn": SECTION_1.crn,
-    #     }
+        section_data = {
+            "user_id": user_id,
+            "semester_id": SECTION_1.semester_id,
+            "crn": SECTION_1.crn,
+        }
         
-    #     # Testing endpoint
-    #     response = requests.post(self.BASE_URL + ENDPOINT, json=section_data)
-    #     self.assertEqual(response.status_code, 200)
+        # Testing endpoint
+        response = requests.post(self.BASE_URL + ENDPOINT, json=section_data, headers=self.HEADERS)
+        self.assertEqual(response.status_code, 200)
         
-    #     # Verifying schedule entry was added
-    #     entry = self.db.get_schedule_entry(user_id=user_id, section_id=SECTION_1.id)
-    #     if not entry:
-    #         self.fail("Schedule entry not added")
+        # Verifying schedule entry was added
+        entry = self.db.get_schedule_entry(user_id=user_id, section_id=SECTION_1.id)
+        if not entry:
+            self.fail("Schedule entry not added")
         
         
-    # def test_add_section_by_section_info(self):
-    #     ENDPOINT = "schedule/add"
+    def test_add_section_by_section_info(self):
+        ENDPOINT = "schedule/add"
     
-    #     section_data = {
-    #         "user_id": user_id,
-    #         "semester_id": SECTION_1.semester_id,        
-    #         "subject_code": CLASS_1.subject_code,
-    #         "class_number": CLASS_1.class_code,
-    #         "section_code": SECTION_1.section_code
-    #     }
+        section_data = {
+            "user_id": user_id,
+            "semester_id": SECTION_1.semester_id,        
+            "subject_code": CLASS_1.subject_code,
+            "class_number": CLASS_1.class_code,
+            "section_code": SECTION_1.section_code
+        }
         
-    #     # Testing endpoint
-    #     response = requests.post(self.BASE_URL + ENDPOINT, json=section_data)
-    #     self.assertEqual(response.status_code, 200)
+        # Testing endpoint
+        response = requests.post(self.BASE_URL + ENDPOINT, json=section_data, headers=self.HEADERS)
+        self.assertEqual(response.status_code, 200)
         
-    #     # Verifying schedule entry was added
-    #     entry = self.db.get_schedule_entry(user_id=user_id, section_id=SECTION_1.id)
-    #     if not entry:
-    #         self.fail("Schedule entry not added")
+        # Verifying schedule entry was added
+        entry = self.db.get_schedule_entry(user_id=user_id, section_id=SECTION_1.id)
+        if not entry:
+            self.fail("Schedule entry not added")
     
     
     # def test_get_user_schedule(self):

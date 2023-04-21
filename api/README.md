@@ -1,5 +1,9 @@
 # APIs
 
+## Authentication
+Requests must be sent with the following header:
+`{'Authorization': API_TOKEN}`
+
 ## List of APIs implemented
 ### User
 

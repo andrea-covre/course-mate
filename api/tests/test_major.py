@@ -17,7 +17,7 @@ class MajorTest(BaseTestCase):
     def test_add_user(self):
         ENDPOINT = "majors"
         
-        response = requests.get(self.BASE_URL + ENDPOINT)
+        response = requests.get(self.BASE_URL + ENDPOINT, headers=self.HEADERS)
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         majors_list = response_data['majors']

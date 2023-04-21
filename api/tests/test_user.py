@@ -24,7 +24,7 @@ class AccountTest(BaseTestCase):
         user_data = asdict(USER_1)
         
         # Adding user to database using the API
-        response = requests.post(self.BASE_URL + ENDPOINT, json=user_data)
+        response = requests.post(self.BASE_URL + ENDPOINT, json=user_data, headers=self.HEADERS)
         self.assertEqual(response.status_code, 200)
         
         response_data = response.json()
@@ -46,7 +46,7 @@ class AccountTest(BaseTestCase):
         params = {'id': user_id}
         
         # Getting just added user through the API
-        response = requests.get(self.BASE_URL + ENDPOINT, params=params)
+        response = requests.get(self.BASE_URL + ENDPOINT, params=params, headers=self.HEADERS)
         
         self.assertEqual(response.status_code, 200)
         
@@ -64,7 +64,7 @@ class AccountTest(BaseTestCase):
           
         # Delete user through the API
         params = {'id': account_id_to_delete}
-        response = requests.delete(self.BASE_URL + ENDPOINT, params=params)
+        response = requests.delete(self.BASE_URL + ENDPOINT, params=params, headers=self.HEADERS)
     
         self.assertEqual(response.status_code, 200)
         
