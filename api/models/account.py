@@ -8,7 +8,7 @@ from api.models.base import Base
 class Account(Base):
     __tablename__ = "account"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[str] = mapped_column(String(128), unique=True, primary_key=True)
     email_address: Mapped[str] = mapped_column(String(320), unique=True)
     edu_email_address: Mapped[str] = mapped_column(String(320), unique=True)
     first_name: Mapped[str] = mapped_column(String(50))

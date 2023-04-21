@@ -1,6 +1,7 @@
 import enum
 
 from typing import List
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from api.models.base import Base
@@ -12,8 +13,8 @@ class Status(enum.Enum):
 class Friendship(Base):
     __tablename__ = "friendship"
 
-    account_id_1: Mapped[int] = mapped_column(primary_key=True)
-    account_id_2: Mapped[int] = mapped_column(primary_key=True)
+    account_id_1: Mapped[str] = mapped_column(String(128), primary_key=True)
+    account_id_2: Mapped[str] = mapped_column(String(128), primary_key=True)
     status: Mapped[Status]
 
     def as_dict(self):

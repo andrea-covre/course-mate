@@ -1,9 +1,10 @@
 import sys
 import argparse
 
-from flask import Flask
 from flask_restful import Api
+from flask import Flask, request, jsonify
  
+from api.auth import authenticate
 from api.endpoints.users import blueprint as users_blueprint
 from api.endpoints.majors import blueprint as majors_blueprint
 from api.endpoints.schedule import blueprint as schedule_blueprint
@@ -19,6 +20,16 @@ app.register_blueprint(majors_blueprint)
 app.register_blueprint(schedule_blueprint)
 app.register_blueprint(friendship_blueprint)
 app.register_blueprint(semester_blueprint)
+
+
+@app.before_request
+def require_auth_token():
+    auth_token = request.headers.get('Authorization')
+    if not auth_token:
+        return jsonify({'message': 'Authorization token is missing'}), 401
+    
+    if not authenticate(auth_token):
+        return jsonify({'message': 'Authorization token is invalid'}), 401
 
 
 if __name__ == '__main__':

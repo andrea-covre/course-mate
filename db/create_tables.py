@@ -13,7 +13,7 @@ from api.models.subject import Subject
 from api.models.section import Section
 from api.planetscale_connection import get_db_session, Session
 
-from db.utils import drop_table_if_exists, create_table
+from db.utils import drop_table_if_exists, create_table, confirm
 
 
 ALL_TABLES = [
@@ -39,6 +39,14 @@ def create_all_tables(session: Session):
 
 
 def main():
+    print("This script will delete all the following tables in the database and recreate them:")
+    for table in ALL_TABLES:
+        print(f" - {table.__tablename__}")
+        
+    if not confirm('Are you sure you want to continue?', False):
+        print("Aborting...")
+        exit(0)
+    
     session = get_db_session(autocommit=False)
     create_all_tables(session)
     session.close()

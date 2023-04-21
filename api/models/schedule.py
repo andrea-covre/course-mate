@@ -6,7 +6,7 @@ from api.models.base import Base
 class Schedule(Base):
     __tablename__ = "schedule"
 
-    account_id: Mapped[int] = mapped_column(primary_key=True)
+    account_id: Mapped[str] = mapped_column(String(128), primary_key=True)
     section_id: Mapped[int] = mapped_column(primary_key=True)
     
     def as_dict(self):
