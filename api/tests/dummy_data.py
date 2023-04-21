@@ -4,6 +4,7 @@ from api.models.account import Account
 
 @dataclass
 class DummyUser():
+    id: str
     email_address: str
     edu_email_address: str
     first_name: str
@@ -13,6 +14,7 @@ class DummyUser():
     major_id: int
     
 USER_1 = DummyUser(
+    id = "00010101000",
     email_address = "andy@coursemate.com",
     edu_email_address = "andy@gt.edu",
     first_name = "test_name",
