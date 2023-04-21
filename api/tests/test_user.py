@@ -33,7 +33,6 @@ class AccountTest(BaseTestCase):
         # Verifying insertion directly from database
         inserted_user = self.db.get_account_by_id(new_user_id)
         inserted_user_data = inserted_user.as_dict()
-        inserted_user_data.pop(Account.id.name)
         
         self.assertDictEqual(user_data, inserted_user_data)
         
@@ -51,7 +50,6 @@ class AccountTest(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         
         response_data = response.json()
-        response_data.pop(Account.id.name)
 
         self.assertDictEqual(response_data, asdict(USER_1))
         

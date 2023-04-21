@@ -10,7 +10,7 @@ Requests must be sent with the following header:
 | Request Method | Endpoint | Description | Body | Has Unittest |
 | --- | --- | --- | --- | --- |
 | `GET` | `/users?id=<user_id>` | Gets user given the user id (can also get user by: `phone_number` \| `email` \| `edu_email` \| (`first_name & last_name`) | | Yes |
-| `POST` | `/users/add` | Creates new user | {<br>"email_address": <br> "edu_email_address": <br> "first_name": <br> "last_name": <br> "phone_number": <br> "grad_year": <br> "major_id": <br> }| Yes |
+| `POST` | `/users/add` | Creates new user | {<br> "id": <br> "email_address": <br> "edu_email_address": <br> "first_name": <br> "last_name": <br> "phone_number": <br> "grad_year": <br> "major_id": <br> }| Yes |
 | `DELETE` | `/users/delete?id=<user_id>` | Deletes user given the user id | | Yes |
 
 ### Schedule
