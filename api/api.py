@@ -30,9 +30,9 @@ def require_auth_token():
     
     if not authenticate(auth_token):
         return jsonify({'message': 'Authorization token is invalid'}), 401
+    
 
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='Run Flask app locally or publicly')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-p', '--public', action='store_true', help='run the app publicly')
@@ -51,3 +51,7 @@ if __name__ == '__main__':
         
     else:
         app.run(debug=True, port=5000)
+    
+
+if __name__ == '__main__':
+    main()
