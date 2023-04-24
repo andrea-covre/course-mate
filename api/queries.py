@@ -16,6 +16,10 @@ class Database():
     def __init__(self, session: Session):
         self.session = session
         
+        self.majors_id_2_name = dict()
+        for id, level, name in self.get_majors():
+            self.majors_id_2_name[id] = f"{level} - {name}"
+        
     def get_account_by_id(self, id: int) -> Account:
         stmt = select(Account).where(Account.id == id)
         account = self.session.scalar(stmt)
@@ -235,18 +239,29 @@ class Database():
             
             if friendship['status'] == Status.accepted:
                 if sender_id == user_id:
-                    receiver_account = self.get_account_by_id(receiver_id)
-                    accepted.append(receiver_account.as_dict())
+                    account = self.get_account_by_id(receiver_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    accepted.append(account)
+                    
                 else:
-                    sender_account = self.get_account_by_id(sender_id)
-                    accepted.append(sender_account.as_dict())
+                    account = self.get_account_by_id(sender_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    accepted.append(account)
+                    
             else:
                 if sender_id == user_id:
-                    receiver_account = self.get_account_by_id(receiver_id)
-                    outgoing.append(receiver_account.as_dict())
+                    account = self.get_account_by_id(receiver_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    outgoing.append(account)
+                    
                 else:
-                    sender_account = self.get_account_by_id(sender_id)
-                    incoming.append(sender_account.as_dict())
+                    account = self.get_account_by_id(sender_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    incoming.append(account)
 
         friendships = {
             "friends": accepted,
