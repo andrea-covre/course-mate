@@ -9,10 +9,12 @@ from sqlalchemy import select
 def get_db_session(autocommit=True):
     load_dotenv()
     print(
+        "==============================================================="
         "\nhost", os.getenv("HOST"),
         "\nuser", os.getenv("USERNAME"),
         "\npasswd", os.getenv("PASSWORD"),
         "\ndb", os.getenv("DATABASE"),
+        "\n==============================================================="
         "\n"
     )
     connection = MySQLdb.connect(
