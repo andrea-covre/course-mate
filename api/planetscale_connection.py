@@ -7,16 +7,24 @@ from sqlalchemy.orm import Session
 
 def get_db_session(autocommit=True):
     load_dotenv()
-    connection = MySQLdb.connect(
-    host= os.getenv("HOST"),
-    user=os.getenv("USERNAME"),
-    passwd= os.getenv("PASSWORD"),
-    db= os.getenv("DATABASE"),
-    ssl_mode = "VERIFY_IDENTITY",
-    ssl      = {
-        "ca": os.getenv("SSL_CA")
-    }
-    )
+    if os.getenv("LOCAL_INSTANCE"):
+        connection = MySQLdb.connect(
+        host= os.getenv("HOST"),
+        user=os.getenv("USERNAME"),
+        passwd= os.getenv("PASSWORD"),
+        db= os.getenv("DATABASE"),
+        ssl_mode = "VERIFY_IDENTITY",
+        ssl      = {
+            "ca": os.getenv("SSL_CA")
+        }
+        )
+    else:
+        connection = MySQLdb.connect(
+        host= os.getenv("HOST"),
+        user=os.getenv("USERNAME"),
+        passwd= os.getenv("PASSWORD"),
+        db= os.getenv("DATABASE")
+        )
 
     engine = db.create_engine('mysql+mysqldb://', creator=lambda: connection)
     
