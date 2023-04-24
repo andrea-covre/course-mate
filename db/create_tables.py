@@ -18,16 +18,16 @@ from db.utils import drop_table_if_exists, create_table, confirm
 
 ALL_TABLES = [
     Account,
-    # Class,
-    # Friendship,
-    # Instructor,
-    # Location,
-    # Major,
-    # Schedule,
-    # Section_Instructor,
-    # Semester,
-    # Subject,
-    # Section
+    Class,
+    Friendship,
+    Instructor,
+    Location,
+    Major,
+    Schedule,
+    Section_Instructor,
+    Semester,
+    Subject,
+    Section
 ]
 
 
