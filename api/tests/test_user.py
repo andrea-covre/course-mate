@@ -15,7 +15,7 @@ class AccountTest(BaseTestCase):
         self.base_setUp()
         
         # Making sure DUMMY USER 1 is not in the database already, if so delete it
-        delete_dummy_user(self.session, USER_1)
+        delete_dummy_user(self.db.session, USER_1)
         
     # POST /users/add
     def test_add_user(self):
@@ -74,7 +74,7 @@ class AccountTest(BaseTestCase):
         self.assertIsNone(inserted_user)
         
     def tearDown(self):
-        delete_dummy_user(self.session, USER_1)
+        delete_dummy_user(self.db.session, USER_1)
         self.base_tearDown()
 
 if __name__ == '__main__':

@@ -10,11 +10,19 @@ from api.models.account import Account
 from api.models.schedule import Schedule
 from api.models.semester import Semester
 from api.models.friendship import Friendship, Status
+from api.planetscale_connection import get_db_session
 
 
 class Database():
-    def __init__(self, session: Session):
-        self.session = session
+    def __init__(self):
+        self.session = get_db_session(autocommit=True)
+        
+    def close(self):
+        self.session.close()
+        
+    def renew_session(self):
+        self.session.close()
+        self.session = get_db_session(autocommit=True)
         
         self.majors_id_2_name = dict()
         for id, level, name in self.get_majors():

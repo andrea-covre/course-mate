@@ -7,7 +7,6 @@ import os
 from dotenv import load_dotenv
 
 from api.queries import Database
-from api.planetscale_connection import get_db_session
 
 load_dotenv()
 
@@ -16,9 +15,8 @@ class BaseTestCase(unittest.TestCase):
     HEADERS = {'Authorization': os.getenv("API_TOKEN_PLAINTEXT")}
     
     def base_setUp(self):     
-        self.session = get_db_session(autocommit=True)
-        self.db = Database(self.session)
+        self.db = Database()
         
     def base_tearDown(self):
-        self.session.close()
+        self.db.close()
 
