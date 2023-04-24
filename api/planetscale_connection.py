@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 
 def get_db_session(autocommit=True):
     load_dotenv()
-    if os.getenv("LOCAL_INSTANCE"):
+    
+    if eval(os.getenv("LOCAL_INSTANCE")):
         connection = MySQLdb.connect(
         host= os.getenv("HOST"),
         user=os.getenv("USERNAME"),
