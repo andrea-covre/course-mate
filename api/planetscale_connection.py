@@ -4,19 +4,9 @@ import MySQLdb
 import sqlalchemy as db
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 
 def get_db_session(autocommit=True):
     load_dotenv()
-    print(
-        "==============================================================="
-        "\nhost", os.getenv("HOST"),
-        "\nuser", os.getenv("USERNAME"),
-        "\npasswd", os.getenv("PASSWORD"),
-        "\ndb", os.getenv("DATABASE"),
-        "\n==============================================================="
-        "\n"
-    )
     connection = MySQLdb.connect(
     host= os.getenv("HOST"),
     user=os.getenv("USERNAME"),
@@ -24,7 +14,7 @@ def get_db_session(autocommit=True):
     db= os.getenv("DATABASE"),
     ssl_mode = "VERIFY_IDENTITY",
     ssl      = {
-        "ca": "/etc/ssl/cert.pem"
+        "ca": os.getenv("SSL_CA")
     }
     )
 
