@@ -224,23 +224,29 @@ class Database():
         outgoing = []
         incoming = []
         
-        user_id = int(user_id)
+        user_id = user_id
         
         for friendship in friendships:
             friendship = friendship[0].as_dict()
             sender_id = friendship['account_id_1']
             receiver_id = friendship['account_id_2']
             
+            receiver_account = self.get_account_by_id(receiver_id)
+            
             if friendship['status'] == Status.accepted:
                 if sender_id == user_id:
-                    accepted.append(receiver_id)
+                    receiver_account = self.get_account_by_id(receiver_id)
+                    accepted.append(receiver_account.as_dict())
                 else:
-                    accepted.append(sender_id)
+                    sender_account = self.get_account_by_id(sender_id)
+                    accepted.append(sender_account.as_dict())
             else:
                 if sender_id == user_id:
-                    outgoing.append(receiver_id)
+                    receiver_account = self.get_account_by_id(receiver_id)
+                    outgoing.append(receiver_account.as_dict())
                 else:
-                    incoming.append(sender_id)
+                    sender_account = self.get_account_by_id(sender_id)
+                    incoming.append(sender_account.as_dict())
 
         friendships = {
             "friends": accepted,
