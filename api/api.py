@@ -36,7 +36,7 @@ def require_auth_token():
     
 @app.errorhandler(500)
 def internal_server_error(e):
-    return jsonify({'error': 'An internal server error occurred.'}), 500
+    return jsonify({'error': f'An internal server error occurred: {e}'}), 500
 
 def main():
     parser = argparse.ArgumentParser(description='Run Flask app locally or publicly')
