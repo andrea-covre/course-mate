@@ -17,26 +17,26 @@ class ScheduleTest(BaseTestCase):
         self.base_setUp()
         
         # Delete dummy section from database
-        self.session.query(Section).filter(
+        self.db.session.query(Section).filter(
             (Section.crn == SECTION_1.crn)).delete()
         
         # Delete dummy class from database
-        self.session.query(Class).filter(
+        self.db.session.query(Class).filter(
             (Class.subject_code == CLASS_1.subject_code and 
              Class.class_code == CLASS_1.class_code)).delete()
         
         # Add dummy class to database
         dummy_class = Class(asdict(CLASS_1))
-        self.session.add(dummy_class)
-        self.session.commit()
+        self.db.session.add(dummy_class)
+        self.db.session.commit()
         
         CLASS_1.id = dummy_class.id
         SECTION_1.class_id = CLASS_1.id
         
         # Add dummy section to database
         dummy_section = Section(asdict(SECTION_1))
-        self.session.add(dummy_section)
-        self.session.commit()
+        self.db.session.add(dummy_section)
+        self.db.session.commit()
         
         SECTION_1.id = dummy_section.section_id
         
@@ -87,17 +87,17 @@ class ScheduleTest(BaseTestCase):
         
     def tearDown(self):
         # Delete dummy section from database
-        self.session.query(Section).filter(
+        self.db.session.query(Section).filter(
             (Section.crn == SECTION_1.crn)).delete()
-        self.session.commit()
+        self.db.session.commit()
         
         # Delete dummy section from database
-        self.session.query(Class).filter(
+        self.db.session.query(Class).filter(
             (Class.id == CLASS_1.id)).delete()
-        self.session.commit()
+        self.db.session.commit()
         
         # Delete dummy entry 
-        self.session.query(Schedule).filter(
+        self.db.session.query(Schedule).filter(
             (Schedule.account_id == user_id and Schedule.section_id == SECTION_1.id)).delete()
         
         self.base_tearDown()

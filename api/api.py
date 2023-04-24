@@ -36,6 +36,7 @@ def require_auth_token():
     
 @app.errorhandler(500)
 def internal_server_error(e):
+    db.renew_session()
     return jsonify({'error': f'An internal server error occurred: {e}'}), 500
 
 def main():

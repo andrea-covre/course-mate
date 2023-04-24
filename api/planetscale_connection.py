@@ -5,6 +5,7 @@ import sqlalchemy as db
 
 from sqlalchemy.orm import Session
 
+
 def get_db_session(autocommit=True):
     load_dotenv()
     
