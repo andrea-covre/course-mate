@@ -24,6 +24,10 @@ class Database():
         self.session.close()
         self.session = get_db_session(autocommit=True)
         
+        self.majors_id_2_name = dict()
+        for id, level, name in self.get_majors():
+            self.majors_id_2_name[id] = f"{level} - {name}"
+        
     def get_account_by_id(self, id: int) -> Account:
         stmt = select(Account).where(Account.id == id)
         account = self.session.scalar(stmt)
@@ -237,16 +241,33 @@ class Database():
             sender_id = friendship['account_id_1']
             receiver_id = friendship['account_id_2']
             
+            receiver_account = self.get_account_by_id(receiver_id)
+            
             if friendship['status'] == Status.accepted:
                 if sender_id == user_id:
-                    accepted.append(receiver_id)
+                    account = self.get_account_by_id(receiver_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    accepted.append(account)
+                    
                 else:
-                    accepted.append(sender_id)
+                    account = self.get_account_by_id(sender_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    accepted.append(account)
+                    
             else:
                 if sender_id == user_id:
-                    outgoing.append(receiver_id)
+                    account = self.get_account_by_id(receiver_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    outgoing.append(account)
+                    
                 else:
-                    incoming.append(sender_id)
+                    account = self.get_account_by_id(sender_id).as_dict()
+                    account['major'] = self.majors_id_2_name[receiver_account.major_id]
+                    
+                    incoming.append(account)
 
         friendships = {
             "friends": accepted,
