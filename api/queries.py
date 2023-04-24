@@ -236,8 +236,6 @@ class Database():
         outgoing = []
         incoming = []
         
-        user_id = user_id
-        
         for friendship in friendships:
             friendship = friendship[0].as_dict()
             sender_id = friendship['account_id_1']
