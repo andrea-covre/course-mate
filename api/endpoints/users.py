@@ -35,7 +35,9 @@ def users():
     
     
     if user:
-        return user.as_dict(), 200
+        user = user.as_dict()
+        user["major"] = db.majors_id_2_name[user["major_id"]]
+        return user, 200
     else:
         return {}, 404
     

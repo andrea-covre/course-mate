@@ -17,16 +17,16 @@ class Database():
     def __init__(self):
         self.session = get_db_session(autocommit=True)
         
+        self.majors_id_2_name = dict()
+        for id, level, name in self.get_majors():
+            self.majors_id_2_name[id] = f"{level} - {name}"
+        
     def close(self):
         self.session.close()
         
     def renew_session(self):
         self.session.close()
         self.session = get_db_session(autocommit=True)
-        
-        self.majors_id_2_name = dict()
-        for id, level, name in self.get_majors():
-            self.majors_id_2_name[id] = f"{level} - {name}"
         
     def get_account_by_id(self, id: int) -> Account:
         stmt = select(Account).where(Account.id == id)
