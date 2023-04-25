@@ -75,14 +75,14 @@ class Database():
             majors.append([id, level, name])
         return majors
     
-    def get_section_id_by_crn(self, semester, crn):
+    def get_section_id_by_crn(self, semester: int, crn: int) -> int:
         stmt = select(Section.section_id).where(
             Section.crn == crn and 
             Section.semester_id == semester)
         section_id = self.session.scalar(stmt)
         return section_id
     
-    def get_section_id_by_class_id(self, semester, class_id, section_code):   
+    def get_section_id_by_class_id(self, semester: int, class_id: int, section_code: str) -> int:   
         stmt = select(Section.section_id).where(
             Section.class_id == class_id and
             Section.semester_id == semester and
@@ -90,7 +90,7 @@ class Database():
         section_id = self.session.scalar(stmt)
         return section_id
     
-    def get_class_id(self, subject_code, class_number):
+    def get_class_id(self, subject_code: str, class_number: str) -> int:
         stmt = select(Class.id).where(
             Class.subject_code == subject_code and 
             Section.class_code == class_number)
@@ -186,7 +186,7 @@ class Database():
         return schedule
     
     
-    def request_friendship(self, sender_id, receiver_id):
+    def request_friendship(self, sender_id: str, receiver_id: str):
         new_entry = {
             "account_id_1": sender_id,
             "account_id_2": receiver_id,
@@ -197,7 +197,7 @@ class Database():
         self.session.commit()
         
         
-    def accept_friendship(self, sender_id, receiver_id):
+    def accept_friendship(self, sender_id: str, receiver_id: str):
         stmt = select(Friendship).where(
         Friendship.account_id_1.in_([sender_id]) 
             ).where(
@@ -209,7 +209,7 @@ class Database():
         self.session.commit()
         
         
-    def delete_friendship(self, user1_id, user2_id):
+    def delete_friendship(self, user1_id: str, user2_id: str):
         stmt = select(Friendship).where(
             or_(
                 and_(
@@ -226,7 +226,19 @@ class Database():
         self.session.commit()
         
         
-    def get_friendships(self, user_id):
+    def get_friendship(self, user_id_1: str, user_id_2: str) -> Friendship:
+        stmt = select(Friendship).where(
+            or_(
+                and_(Friendship.account_id_1 == user_id_1, Friendship.account_id_2 == user_id_2), 
+                and_(Friendship.account_id_1 == user_id_2, Friendship.account_id_2 == user_id_1)
+                ))
+        
+        friendship = self.session.execute(stmt).scalar()
+
+        return friendship
+
+        
+    def get_all_friendships(self, user_id):
         # Getting all friendships
         stmt = select(Friendship).where(
             or_(Friendship.account_id_1 == user_id, Friendship.account_id_2 == user_id))
