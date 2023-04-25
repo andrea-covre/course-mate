@@ -33,6 +33,8 @@ class AccountTest(BaseTestCase):
         # Verifying insertion directly from database
         inserted_user = self.db.get_account_by_id(new_user_id)
         inserted_user_data = inserted_user.as_dict()
+
+        user_data.pop("major")
         
         self.assertDictEqual(user_data, inserted_user_data)
         

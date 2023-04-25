@@ -12,6 +12,7 @@ class DummyUser():
     phone_number: int
     grad_year: int
     major_id: int
+    major: str
     
 USER_1 = DummyUser(
     id = "00010101000",
@@ -21,7 +22,8 @@ USER_1 = DummyUser(
     last_name = "test_lastname",
     phone_number = "9999999999",
     grad_year = 2024,
-    major_id = 54
+    major_id = 54,
+    major = "MS - Computer Science"
 )
 
 
