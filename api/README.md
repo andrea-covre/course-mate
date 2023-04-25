@@ -12,6 +12,7 @@ Requests must be sent with the following header:
 | `GET` | `/users?id=<user_id>` | Gets user given the user id (can also get user by: `phone_number` \| `email` \| `edu_email` \| (`first_name & last_name`) | | Yes |
 | `POST` | `/users/add` | Creates new user | {<br> "id": <br> "email_address": <br> "edu_email_address": <br> "first_name": <br> "last_name": <br> "phone_number": <br> "grad_year": <br> "major_id": <br> }| Yes |
 | `DELETE` | `/users/delete?id=<user_id>` | Deletes user given the user id | | Yes |
+| `GET` | `/users/by_section?user_id=<user_id>&section_id=<section_id>` | Returns  `first_name`, `last_name`, `id`, `friends`, for all user taking the given section | | No |
 
 ### Schedule
 
@@ -31,7 +32,7 @@ Requests must be sent with the following header:
 | --- | --- | --- | --- |
 | `GET` | `/friendship/request?sender_id=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
 | `GET` | `/friendship/accept?sender_id=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
-| `GET` | `/friendship/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
+| `DELETE` | `/friendship/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
 | `GET` | `/friendship/list?user_id=<user_id>` | Get all friendships given the user_id, returns a dictionary of the form: `{"friends": [list of ids], "incoming_requests": [list of ids], "outgoing_requests": [list of ids]}` | No |
 | `GET` | `/friendship/get_by_section?user_id=<user_id>&section_id=<section_id>` | Get all friends taking a given section, returns a list of dictionaries with `first_name`, `last_name`, `id` as keys. | No |
 
