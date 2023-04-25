@@ -64,3 +64,17 @@ def delete_user():
     else:
         return {'Message': f'User with ID {id} not found.'}, 404
     
+    
+# GET /users/by_section?user_id=<user_id>&section_id=<section_id>
+@blueprint.route('/by_section', methods=['GET'])
+def get_users_by_section():
+    args = request.args
+    user_id = args.get('user_id')
+    section_id = args.get('section_id')
+    
+    if user_id is None or section_id is None:
+        return {'Message': 'user_id and section_id are required parameters'}, 400
+    
+    users = db.get_users_by_section(user_id, section_id)
+    
+    return users, 200

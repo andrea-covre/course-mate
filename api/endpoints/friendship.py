@@ -46,8 +46,8 @@ def accept_friendship():
     
     return {}, 200
 
-# GET /delete?user1_id=<sender_id>&user2_id=<receiver_id>
-@blueprint.route('/delete', methods=['GET'])
+# DELETE /delete?user1_id=<sender_id>&user2_id=<receiver_id>
+@blueprint.route('/delete', methods=['DELETE'])
 def delete_friendship():
     args = request.args
     user1_id = args.get('user1_id')

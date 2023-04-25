@@ -310,6 +310,29 @@ class Database():
             
         return friends
     
+    def get_users_by_section(self, user_id, section_id):
+        accounts = self.session.query(Account).join(Schedule, Account.id == Schedule.account_id).filter(Schedule.section_id == section_id).all()
+        friends = self.get_all_friendships(user_id)["friends"]
+        
+        friends_ids = [friend["id"] for friend in friends]
+        
+        users_in_section = []
+        for account in accounts:
+            if account.id == user_id:
+                continue
+            
+            user = {
+                "first_name": account.first_name,
+                "last_name": account.last_name,
+                "id": account.id,
+                "friend": account.id in friends_ids
+            }
+            
+            users_in_section.append(user)
+            
+        return users_in_section
+        
+    
     def get_semesters(self):
         results = self.session.query(Semester).all()
         semesters = []
