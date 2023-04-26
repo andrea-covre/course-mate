@@ -1,27 +1,79 @@
-# course-mate
+# APIs
 
-For internal use only: to connect to database and use API, add a password field to the SQLConnectionObject in connection.py. 
+## Authentication
+Requests must be sent with the following header:
+`{'Authorization': API_TOKEN}`
 
-Example:
+## List of APIs implemented
+### User
 
-self.password = $your_password$
+| Request Method | Endpoint | Description | Body | Has Unittest |
+| --- | --- | --- | --- | --- |
+| `GET` | `/users?id=<user_id>` | Gets user given the user id (can also get user by: `phone_number` \| `email` \| `edu_email` \| (`first_name & last_name`) | | Yes |
+| `POST` | `/users/add` | Creates new user | {<br> "id": <br> "email_address": <br> "edu_email_address": <br> "first_name": <br> "last_name": <br> "phone_number": <br> "grad_year": <br> "major_id": <br> }| Yes |
+| `DELETE` | `/users/delete?id=<user_id>` | Deletes user given the user id | | Yes |
+| `GET` | `/users/by_section?user_id=<user_id>&section_id=<section_id>` | Returns  `first_name`, `last_name`, `id`, `friends`, for all user taking the given section | | No |
 
-Localhost API Documentation:
+### Schedule
 
-http://127.0.0.1:5000/users?id=<user_id> -> Retrieve account data for provided user ID (GET)
+| Request Method | Endpoint | Description | Body | Has Unittest |
+| --- | --- | --- | --- | --- |
+| `POST` | `/schedule/add` | Adds a section to the user schedule | {<br>"user_id": <br> "semester_id": <br> "crn": <br> } <br> *or* --- <br> {<br>"user_id": <br> "semester_id": <br> "subject_code": <br> "class_number": <br> "section_code": <br> } | Yes |
+| `DELETE` | `/schedule/?id=<user_id>&section_id=<section_id>` | Removes a section from the user schedule | | No |
+| `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of dictionaries with `title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
+| `GET` | `/schedule/common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>` | Gets the common classes given two users ids and semester id. Returns a list of dictionaries with `class_title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
 
-http://127.0.0.1:5000/users/add -> Create account for user by passing atleast all mandatory fields as per schema. (POST)
+### Friendship
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/friendship/request?sender_id=<sender_id>&receiver_id=<receiver_id>` | Create a friendship request from sender_id to receiver_id | No |
+| `GET` | `/friendship/accept?sender_id=<sender_id>&receiver_id=<receiver_id>` | Accept a friendship request from sender_id to receiver_id | No |
+| `DELETE` | `/friendship/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
+| `GET` | `/friendship/list?user_id=<user_id>` | Get all friendships given the user_id, returns a dictionary of the form: `{"friends": [list of ids], "incoming_requests": [list of ids], "outgoing_requests": [list of ids]}` | No |
+| `GET` | `/friendship/get_by_section?user_id=<user_id>&section_id=<section_id>` | Get all friends taking a given section, returns a list of dictionaries with `first_name`, `last_name`, `id` as keys. | No |
 
-http://127.0.0.1:5000/users/update/email -> Update user email for provided user ID (PUT)
+### Major
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/majors` | Gets all majors and their corresponding id | Yes |
 
-http://127.0.0.1:5000/users/update/edu_email -> Update user .edu email for provided user ID (PUT)
+### Section
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/sections/?semester_id=<semester_id>` | Gets all the sections offered given a semester | No |
 
-http://127.0.0.1:5000/users/update/first_name -> Update user first name for provided user ID (PUT)
+### Semester
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/semester` | Get all semesters, returns a list of dictionaries with `id`, `term`, `year` as keys | No |
 
-http://127.0.0.1:5000/users/update/last_name -> Update user last name for provided user ID (PUT)
+## Instructions
 
-http://127.0.0.1:5000/users/update/phone_number -> Update user phone number for provided user ID (PUT)
+### Run the API Server
 
-http://127.0.0.1:5000/users/update/major_id -> Update user major ID for provided user ID (PUT)
+#### Run the API Server Locally
+To run the server locally on port `5000`, run the following command:
+```bash
+python -m api.api
+```
 
-http://127.0.0.1:5000/users/update/grad_year -> Update user graduation year for provided user ID (PUT)
+#### Run the API Server Publicly
+To run the server publicly on port `8080`, run the following command:
+```bash
+python -m api.api -p
+```
+
+---
+
+### Run the unittests
+Make sure the API server is running before running the tests.
+
+#### Run the unittests Locally
+```bash
+python -m api.tests.runner
+```
+
+#### Run the unittests on Public Address
+```bash
+python -m api.tests.runner [-p <public_address>]
+```
