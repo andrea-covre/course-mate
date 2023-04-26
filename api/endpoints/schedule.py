@@ -57,6 +57,22 @@ def add_section():
     return {}, 200
 
 
+# DELETE ?id=<user_id>&section_id=<section_id>
+@blueprint.route('/', methods=['DELETE'])
+def delete_schedule_section():
+    args = request.args
+    user_id = args.get('id')
+    section_id = args.get('section_id')
+    
+    deleted_entry = db.remove_schedule_entry(user_id, section_id)
+    
+    if deleted_entry:
+        return {}, 200
+    
+    else:
+        return {"Message": f"Schedule entry for user {user_id} and section {section_id} does not exist."}, 404
+
+
 # GET ?id=<user_id>&semester=<semester_id>
 @blueprint.route('/', methods=['GET'])
 def get_schedule():

@@ -19,6 +19,7 @@ Requests must be sent with the following header:
 | Request Method | Endpoint | Description | Body | Has Unittest |
 | --- | --- | --- | --- | --- |
 | `POST` | `/schedule/add` | Adds a section to the user schedule | {<br>"user_id": <br> "semester_id": <br> "crn": <br> } <br> *or* --- <br> {<br>"user_id": <br> "semester_id": <br> "subject_code": <br> "class_number": <br> "section_code": <br> } | Yes |
+| `DELETE` | `/schedule/?id=<user_id>&section_id=<section_id>` | Removes a section from the user schedule | | No |
 | `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of dictionaries with `title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
 | `GET` | `/schedule/common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>` | Gets the common classes given two users ids and semester id. Returns a list of dictionaries with `class_title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
 

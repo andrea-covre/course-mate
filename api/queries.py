@@ -106,6 +106,14 @@ class Database():
         self.session.add(new_entry)
         self.session.commit()   
         
+    def remove_schedule_entry(self, user_id, section_id):
+        entry_to_delete = self.session.query(Schedule).filter_by(account_id=user_id, section_id=section_id).first()
+        if entry_to_delete:
+            self.session.delete(entry_to_delete)
+            self.session.commit()
+            
+        return entry_to_delete
+        
     def get_schedule_entry(self, user_id, section_id):
         stmt = select(Schedule).where(Schedule.account_id == user_id and Schedule.section_id == section_id)
         entry = self.session.scalar(stmt)
