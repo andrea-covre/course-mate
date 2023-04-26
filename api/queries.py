@@ -330,6 +330,8 @@ class Database():
             
             users_in_section.append(user)
             
+        users_in_section = sorted(users_in_section, key=lambda x: (not x["friend"], x["last_name"]))
+            
         return users_in_section
         
     
