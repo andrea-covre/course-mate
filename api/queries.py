@@ -1,7 +1,5 @@
-from typing import Tuple
-
 from sqlalchemy import select, or_, and_
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import aliased, joinedload
 
 from api.models.major import Major
 from api.models.class_ import Class
@@ -74,6 +72,25 @@ class Database():
             name = major['name']
             majors.append([id, level, name])
         return majors
+    
+    def get_sections(self, semester_id: int) -> list:
+        stmt = select(Section, Class).join(Class, Section.class_id == Class.id).where(Section.semester_id == semester_id)
+        sections = self.session.execute(stmt).all()
+        
+        sections_list = []
+        for section in sections:
+            section_info = section[0].as_dict()
+            class_info = section[1].as_dict()
+            
+            section = {**section_info, **class_info}
+            
+            section["name"] = f"{section['subject_code']} {section['class_code']} - {section['section_code']} - {section['crn']}"
+            section.pop("id") # To avoid confusion with section_id / class_id
+            
+            sections_list.append(section)
+            
+        return sections_list
+
     
     def get_section_id_by_crn(self, semester: int, crn: int) -> int:
         stmt = select(Section.section_id).where(

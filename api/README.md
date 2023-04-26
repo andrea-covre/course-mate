@@ -23,11 +23,6 @@ Requests must be sent with the following header:
 | `GET` | `/schedule/?id=<user_id>&semester=<semester_id>` | Gets a user schedule given its id and semester id. Returns a list of dictionaries with `title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
 | `GET` | `/schedule/common?id_1=<user_id_1>&id_2=<user_id_2>&semester=<semester_id>` | Gets the common classes given two users ids and semester id. Returns a list of dictionaries with `class_title`, `class_subject`, `class_number`, `section_code`, `crn`, `section_id` as keys |  | No |
 
-### Major
-| Request Method | Endpoint | Description | Has Unittest |
-| --- | --- | --- | --- |
-| `GET` | `/majors` | Gets all majors and their corresponding id | Yes |
-
 ### Friendship
 | Request Method | Endpoint | Description | Has Unittest |
 | --- | --- | --- | --- |
@@ -36,6 +31,16 @@ Requests must be sent with the following header:
 | `DELETE` | `/friendship/delete?user1_id=<sender_id>&user2_id=<receiver_id>` | Delete a friendship request from user1_id to user2_id | No |
 | `GET` | `/friendship/list?user_id=<user_id>` | Get all friendships given the user_id, returns a dictionary of the form: `{"friends": [list of ids], "incoming_requests": [list of ids], "outgoing_requests": [list of ids]}` | No |
 | `GET` | `/friendship/get_by_section?user_id=<user_id>&section_id=<section_id>` | Get all friends taking a given section, returns a list of dictionaries with `first_name`, `last_name`, `id` as keys. | No |
+
+### Major
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/majors` | Gets all majors and their corresponding id | Yes |
+
+### Section
+| Request Method | Endpoint | Description | Has Unittest |
+| --- | --- | --- | --- |
+| `GET` | `/sections/?semester_id=<semester_id>` | Gets all the sections offered given a semester | No |
 
 ### Semester
 | Request Method | Endpoint | Description | Has Unittest |
